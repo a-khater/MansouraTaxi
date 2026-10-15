@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#121b1c">
+  <meta name="description" content="Drive a classic Egyptian taxi, pick up passengers, and explore a 3D Mansoura-inspired city along the Nile.">
+  <title>Mansoura Taxi — The streets are calling</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%23853f42'/%3E%3Cpath d='M12 36l7-17h26l7 17v14H12z' fill='%23eee5ca'/%3E%3Cpath d='M23 23h18l4 11H19z' fill='%23364b50'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="gameCanvas" aria-label="3D Mansoura driving world"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+  <div id="loading" class="loading"><div class="checker"></div><strong>MANSOURA<span>TAXI</span></strong><p>Finding our way to the Nile…</p><span class="loading-line"></span></div>
+  <header id="topbar" class="topbar">
+    <button id="homeButton" class="brand" aria-label="Mansoura Taxi home"><span class="brand-icon"><i></i><i></i><i></i><i></i><i></i><i></i></span><span>MANSOURA<b>TAXI<span class="brand-dot">.</span></b></span></button>
+    <nav class="navigation" aria-label="Main navigation"><button data-panel="drive" class="active">THE DRIVE</button><button data-panel="city">THE CITY</button><button data-panel="garage">THE GARAGE</button></nav>
+    <div class="top-tools"><span class="live-label"><i></i> OPEN WORLD · BROWSER EDITION</span><button id="soundButton" class="icon-button" aria-label="Enable engine sound" title="Toggle engine sound">♪</button><button id="settingsButton" class="icon-button" aria-label="Settings" title="Settings">⚙</button><button id="fullscreenButton" class="icon-button" aria-label="Enter fullscreen" title="Fullscreen">⛶</button></div>
+  </header>
+  <main id="menu" class="menu">
+    <div class="hero-copy"><p class="eyebrow"><span></span> EL MANSOURA, EGYPT <span class="arabic-small" lang="ar">المنصورة، مصر</span></p><h1>THE STREETS<br>ARE <em>CALLING.</em></h1><p class="intro">A little chaos. A lot of character.<br>Your taxi. Your city. Your next story.</p><div class="hero-action"><button id="playButton" class="play-button"><span class="play-icon">▶</span><span>LET’S DRIVE <small lang="ar">يلا بينا</small></span><span class="button-arrow">↗</span></button><span class="no-download">NO DOWNLOAD.<br>JUST GOOD DRIVING.</span></div><button id="controlsButton" class="text-button"><span class="keycap">?</span> First time behind the wheel? <span>↗</span></button></div>
+    <div class="scene-label"><span class="location-pin">⌖</span><div><small>YOU’RE IN</small><strong>Al Mashaya Corniche</strong><span lang="ar">المشاية · على النيل</span></div><button id="timeButton" class="weather-pill" title="Switch day and night"><span id="weatherIcon">☀</span><span id="weatherText">GOLDEN HOUR</span></button></div>
+    <section class="mode-section" aria-label="Choose your drive"><div class="section-caption"><span>01 — CHOOSE YOUR DRIVE</span><span>THE CITY IS YOURS TO EXPLORE</span></div><div class="mode-grid"><button class="mode-card selected" data-mode="roam"><span class="mode-icon">↗</span><span class="mode-content"><small>NO CLOCK. NO PRESSURE.</small><strong>Free roam</strong><span>Take the long way home.</span></span><span class="mode-select"></span></button><button class="mode-card" data-mode="shift"><span class="mode-icon">▤</span><span class="mode-content"><small>EVERY FARE HAS A STORY.</small><strong>Taxi shift</strong><span>Pick up. Drive. Get paid.</span></span><span class="mode-select"></span></button><button class="mode-card" data-mode="night"><span class="mode-icon moon">☾</span><span class="mode-content"><small>A DIFFERENT SIDE OF THE CITY.</small><strong>After hours</strong><span>Chase the lights along the Nile.</span></span><span class="mode-select"></span></button></div></section>
+    <footer class="menu-footer"><span><i class="status-dot"></i> AN ORIGINAL MANSOURA-INSPIRED EXPERIENCE</span><span>BUILT FOR THE LOVE OF THE STREETS <span class="footer-arabic" lang="ar">يا مساء الفل</span></span><span class="version">EARLY ACCESS <b>0.1</b></span></footer>
+  </main>
+  <section id="hud" class="hud hidden" aria-label="Driving dashboard">
+    <div class="drive-top"><div class="drive-brand">MANSOURA<span>TAXI.</span><small id="modeLabel">FREE ROAM</small></div><div class="wallet"><small>YOUR EARNINGS</small><strong><span id="cash">0</span> <span>EGP</span></strong><small id="tripCount">0 rides completed</small></div><button id="pauseButton" class="icon-button" aria-label="Pause game">Ⅱ</button></div>
+    <div id="dispatch" class="dispatch"><div class="dispatch-heading"><i class="status-dot"></i><span id="dispatchLabel">TAKE IT ALL IN</span><span id="fareTimer"></span></div><h2 id="objectiveTitle">Welcome to Al Mashaya.</h2><p id="objectiveDetail">Follow the river. Find your own way.</p><button id="dispatchButton" class="dispatch-action">START A TAXI SHIFT <span>↗</span></button><div id="fareProgress" class="fare-progress hidden"><span></span></div></div>
+    <div id="navInstruction" class="nav-instruction hidden"><span id="navArrow">↑</span><div><strong id="navDistance">200 m</strong><small id="navStreet">Follow the highlighted route</small></div></div>
+    <div class="bottom-left"><button id="minimapButton" class="minimap-button" aria-label="Open city map"><canvas id="minimap" width="256" height="210"></canvas><span class="map-north">N ↑</span><span class="map-expand">M <span>⛶</span></span></button><div class="map-location"><span class="location-pin">⌖</span><div><strong id="districtName">Al Mashaya Corniche</strong><small id="districtArabic" lang="ar">المشاية</small></div><span id="clockLabel">17:42</span></div><div class="health-line"><span id="healthBar"></span></div></div>
+    <div id="interaction" class="interaction hidden"><span class="keycap">E</span><div><strong id="interactTitle">Pick up passenger</strong><small>Come to a stop inside the marker</small></div></div>
+    <div class="speedometer"><div class="speed-top"><span id="gear">N</span><small id="cameraLabel">CHASE CAM</small></div><div class="speed-number"><strong id="speed">000</strong><span>KM/H</span></div><div class="speed-bars" id="speedBars"></div><div class="speed-bottom"><span id="distanceTravelled">0.0 KM</span><span><i class="status-dot"></i> <span id="healthText">100% CONDITION</span></span></div></div>
+    <div class="driving-hints"><span><kbd>W A S D</kbd> DRIVE</span><span><kbd>SPACE</kbd> BRAKE</span><span><kbd>C</kbd> CAMERA</span><span><kbd>H</kbd> HORN</span><span><kbd>M</kbd> MAP</span><span><kbd>ESC</kbd> PAUSE</span></div>
+  </section>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="mobileControls" class="mobile-controls hidden"><div><button data-touch="left" aria-label="Steer left">◀</button><button data-touch="right" aria-label="Steer right">▶</button></div><button data-touch="interact" aria-label="Pick up or drop off passenger">E</button><div><button data-touch="reverse" aria-label="Reverse">▼</button><button data-touch="throttle" aria-label="Accelerate">▲</button><button data-touch="brake" aria-label="Brake">▰</button></div></div>
+  <dialog id="panelDialog" class="panel-dialog"><div id="panelContent"></div><button id="closePanel" class="close-panel" aria-label="Close panel">×</button></dialog>
+  <div id="renderError" class="render-error hidden"><h1>The city needs a little more horsepower.</h1><p>This 3D game needs a browser with WebGL enabled. Try an updated browser with hardware acceleration switched on.</p><button onclick="location.reload()">TRY AGAIN ↗</button></div>
+  <script type="module" src="game.js"></script>
+</body>
+</html>
