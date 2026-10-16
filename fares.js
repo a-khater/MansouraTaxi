@@ -141,6 +141,8 @@ export function createFareSystem({ landmarks = [], roads, start = { x: 0, z: 0 }
   if (landmarks.length < 2 || landmarks.some(p => !Number.isFinite(p.x) || !Number.isFinite(p.z))) throw new TypeError('Fare system needs at least two finite landmarks.');
   const places = landmarks.map(p => point(p));
   const events = [];
+  const remainingRoutes = new Map();
+  let currentStopId = null;
   let rngState = Number(seed) >>> 0, serial = 0, eventSerial = 0, nextRequest = 0, banterAt = 18, refusalStreak = 0;
   let lastPlayer = { ...start, speed: 0, health: 100 }, lastDistance = Number.isFinite(start.distance) ? start.distance : null;
   const random = () => { rngState = (Math.imul(rngState, 1664525) + 1013904223) >>> 0; return rngState / 4294967296; };
@@ -164,7 +166,39 @@ export function createFareSystem({ landmarks = [], roads, start = { x: 0, z: 0 }
     if (!player) return lastPlayer;
     if (!Number.isFinite(player.x) || !Number.isFinite(player.z)) throw new TypeError('Player needs finite x and z.');
     lastPlayer = { ...lastPlayer, ...player, speed: Number.isFinite(player.speed) ? player.speed : 0 };
+    // distance is optional. Do not retain a stale odometer when an embedding
+    // switches to position-only updates: doing so silently erases all detours.
+    if (!Number.isFinite(player.distance)) delete lastPlayer.distance;
     return lastPlayer;
+  }
+
+  function remainingRoute(rider) {
+    const straight = distance(lastPlayer, rider.destination);
+    if (straight <= 13) {
+      rider.remainingDistance = straight; rider.routeReachable = true;
+      return straight;
+    }
+    let sample = remainingRoutes.get(rider.id);
+    const moved = sample ? distance(lastPlayer, sample) : Infinity;
+    // At most one road search per rider every two seconds of ordinary driving.
+    // Longer jumps refresh immediately; small motion uses a distance correction.
+    if (!sample || moved >= 60 || (moved >= 8 && state.elapsed - sample.time >= 2)) {
+      const route = routeTo(lastPlayer, rider.destination, network);
+      sample = { x: lastPlayer.x, z: lastPlayer.z, time: state.elapsed, straight, length: route.length, reachable: route.reachable !== false };
+      remainingRoutes.set(rider.id, sample);
+    }
+    const length = sample.reachable ? Math.max(0, sample.length + straight - sample.straight) : Infinity;
+    rider.remainingDistance = length;
+    rider.routeReachable = sample.reachable;
+    return length;
+  }
+
+  function refreshEarlyExit(rider) {
+    if (!rider.wantsOut || Math.abs(lastPlayer.speed) > 3) return;
+    const road = nearestRoad(lastPlayer, network);
+    // A request to stop is not a demand to reverse to the exact place where
+    // patience expired. A later stopped road position is still a valid exit.
+    if (road.distance <= 13) rider.exitPoint = point(road, 'نزّلني هنا');
   }
 
   function makeOffer() {
@@ -192,7 +226,7 @@ export function createFareSystem({ landmarks = [], roads, start = { x: 0, z: 0 }
       pickup: point(pickup), destination, baseFare, fare: baseFare,
       directDistance, askedDestination: false, routeShared: false, routeCompatible,
       routeSummary: existing.map(d => d.arabic).join(' ← '), accepted: false,
-      haggleCount: 0, haggled: false, secondsLeft: 48, patience: 100,
+      haggleCount: 0, haggled: false, secondsLeft: 48, maxSeconds: 48, patience: 100,
       maxWilling: Math.round(baseFare * (1.15 + random() * .35)), dialogue: scene.line,
     };
     emit('offer', scene.line, { speaker: 'passenger', passengerId: id, offer: { ...state.offer, scene: { ...scene }, pickup: { ...state.offer.pickup }, destination: { ...destination } } });
@@ -233,7 +267,7 @@ export function createFareSystem({ landmarks = [], roads, start = { x: 0, z: 0 }
     if (o.accepted) return result(true, 'already-accepted', { offer: o });
     if (state.passengers.length >= state.maxPassengers) return result(false, 'full');
     if (options?.shared || options?.shareRoute) shareRoute();
-    o.accepted = true; o.secondsLeft = 100; refusalStreak = 0;
+    o.accepted = true; o.maxSeconds = 100; o.secondsLeft = o.maxSeconds; refusalStreak = 0;
     speak('driver', o.haggled ? `اتفقنا على ${o.fare}. والاتفاق مش بيتغير لما نوصل.` : 'اتفضل. الأجرة واضحة، والمكان هو اللي اتقال. نخلي الخناقة لزحمة الشارع.', { passengerId: o.id });
     emit('accepted', 'الراكب مستنيك توقف جنبه. E للركوب.', { passengerId: o.id });
     return result(true, 'accepted', { offer: o });
@@ -257,7 +291,10 @@ export function createFareSystem({ landmarks = [], roads, start = { x: 0, z: 0 }
     const o = state.offer;
     if (!o || o.accepted) return result(false, 'no-offer');
     o.haggleCount++; o.haggled = true; o.askedDestination = true; o.patience -= 12;
-    const request = Math.round(o.baseFare * (o.haggleCount === 1 ? 1.3 : 1.7));
+    // The action is labelled "زود خمسة": raise the current quote by five,
+    // including a disclosed shared quote, rather than replacing it with +30%.
+    const request = o.fare + 5;
+    o.proposedFare = request;
     const repDelta = reputation(o.haggleCount === 1 ? -2 : -4);
     speak('driver', `المشوار ده بـ${request}. أصل اللفة محتاجة تمويل مستقل.`, { passengerId: o.id });
     if (request <= o.maxWilling && o.haggleCount === 1) {
@@ -267,7 +304,7 @@ export function createFareSystem({ landmarks = [], roads, start = { x: 0, z: 0 }
       return result(true, 'higher-fare', { offer: o });
     }
     if (o.haggleCount === 1) {
-      o.dialogue = `لأ. ${o.baseFare} زي ما قلت الأول. أنا رايح ${o.destination.arabic}، مش بشتريه.`;
+      o.dialogue = `لأ. ${o.fare} زي ما اتفقنا الأول. أنا رايح ${o.destination.arabic}، مش بشتريه.`;
       emit('counteroffer', o.dialogue, { speaker: 'passenger', passengerId: o.id, reputationDelta: repDelta });
       return result(true, 'counteroffer', { offer: o });
     }
@@ -303,6 +340,8 @@ export function createFareSystem({ landmarks = [], roads, start = { x: 0, z: 0 }
       complaintLevel: 0, wantsOut: false, exitPoint: null,
     };
     others.push(rider); state.offer = null; nextRequest = requestDelay();
+    remainingRoutes.set(rider.id, { x: lastPlayer.x, z: lastPlayer.z, time: state.elapsed,
+      straight: distance(lastPlayer, rider.destination), length: o.directDistance, reachable: true });
     state.driverMood = clamp(state.driverMood - 2, 0, 100);
     emit('pickup', pick(dialogue.boarding), { speaker: 'driver', passengerId: rider.id, occupancy: others.length });
     if (others.length === 4) speak('passenger', pick(dialogue.crowded), { passengerId: rider.id });
@@ -321,6 +360,8 @@ export function createFareSystem({ landmarks = [], roads, start = { x: 0, z: 0 }
     } else state.abandoned++;
     const delta = reputation(early ? -9 : fair && rider.patience > 60 ? 3 : rider.patience < 35 ? -5 : 0);
     state.passengers = state.passengers.filter(p => p.id !== rider.id);
+    remainingRoutes.delete(rider.id);
+    if (currentStopId === rider.id) currentStopId = null;
     const receipt = { passengerId: rider.id, destination: rider.destination, amount, tip, quotedFare: rider.fare, early, patience: Math.round(rider.patience), reputationDelta: delta };
     state.receipts.push(receipt); if (state.receipts.length > 24) state.receipts.shift();
     emit(early ? 'abandoned' : 'dropoff', early ? 'الراكب نزل من غير أجرة. اللفة الطويلة أكلت المكسب والسمعة.' : pick(rider.patience > 60 ? dialogue.goodArrival : dialogue.badArrival), { speaker: 'passenger', ...receipt });
@@ -331,19 +372,34 @@ export function createFareSystem({ landmarks = [], roads, start = { x: 0, z: 0 }
 
   function getTarget() {
     const unhappy = state.passengers.find(p => p.wantsOut);
-    if (unhappy) return { ...unhappy.exitPoint, kind: 'dropoff', passengerId: unhappy.id, earlyExit: true, name: 'نزّلني هنا · وقفة آمنة', arabic: 'نزّلني هنا' };
+    if (unhappy) {
+      refreshEarlyExit(unhappy);
+      return { ...unhappy.exitPoint, kind: 'dropoff', passengerId: unhappy.id, earlyExit: true, name: 'نزّلني هنا · وقفة آمنة', arabic: 'نزّلني هنا' };
+    }
+    // Do not hide a passenger's completed stop behind a different accepted
+    // pickup. The player can finish the nearby journey before moving on.
+    const arrived = state.passengers.filter(p => distance(lastPlayer, p.destination) <= 13)
+      .sort((a, b) => distance(lastPlayer, a.destination) - distance(lastPlayer, b.destination))[0];
+    if (arrived) return { ...arrived.destination, kind: 'dropoff', passengerId: arrived.id };
     if (state.offer?.accepted || (!state.passengers.length && state.offer)) return { ...state.offer.pickup, kind: 'pickup', passengerId: state.offer.id };
     if (!state.passengers.length) return null;
-    const nearest = state.passengers.reduce((a, b) => distance(lastPlayer, a.destination) <= distance(lastPlayer, b.destination) ? a : b);
-    return { ...nearest.destination, kind: 'dropoff', passengerId: nearest.id };
+    const costs = state.passengers.map(rider => ({ rider, length: remainingRoute(rider) }));
+    let best = costs.reduce((a, b) => a.length <= b.length ? a : b);
+    const previous = costs.find(p => p.rider.id === currentStopId);
+    // A few meters of approximation around an intersection must not flicker
+    // the route between two riders on every HUD frame.
+    if (previous && previous.length <= best.length + 15) best = previous;
+    currentStopId = best.rider.id;
+    return { ...best.rider.destination, kind: 'dropoff', passengerId: best.rider.id, reachable: best.rider.routeReachable, routeDistance: best.length };
   }
 
   function interact(player) {
     readPlayer(player);
     if (!state.active) return result(false, 'inactive');
     if (Math.abs(lastPlayer.speed) > 3) { emit('hint', 'وقف الأول. الباب مش معمول للركوب الطائر.'); return result(false, 'moving'); }
+    for (const rider of state.passengers) refreshEarlyExit(rider);
     const close = state.passengers.filter(p => distance(lastPlayer, p.wantsOut ? p.exitPoint : p.destination) <= 13);
-    const dropped = close.map(p => finish(p, p.wantsOut));
+    const dropped = close.map(p => finish(p, p.wantsOut && distance(lastPlayer, p.destination) > 13));
     let boarded = null;
     if (state.offer?.accepted && distance(lastPlayer, state.offer.pickup) <= 13 && state.passengers.length < state.maxPassengers) boarded = board(state.offer);
     if (dropped.length || boarded) return result(true, boarded ? 'boarded' : 'dropped-off', { dropped, boarded });
@@ -377,7 +433,7 @@ export function createFareSystem({ landmarks = [], roads, start = { x: 0, z: 0 }
     if (Number.isFinite(lastPlayer.distance)) {
       if (lastDistance !== null && lastPlayer.distance >= lastDistance) travelled = lastPlayer.distance - lastDistance;
       lastDistance = lastPlayer.distance;
-    }
+    } else lastDistance = null;
     if (!state.active || dt === 0) return state;
     // Split large simulation ticks so expiries, protests and new offers agree
     // with normal animation-frame updates. No timers keep running while paused.
@@ -399,7 +455,8 @@ export function createFareSystem({ landmarks = [], roads, start = { x: 0, z: 0 }
         rider.secondsOnboard += step; rider.riddenDistance += travelled * step / dt;
         const normalLoss = 100 / rider.maxRideSeconds;
         const loss = normalLoss * step;
-        const excess = Math.max(0, rider.riddenDistance + distance(lastPlayer, rider.destination) - rider.directDistance * 1.4 - 100);
+        const remaining = remainingRoute(rider);
+        const excess = Number.isFinite(remaining) ? Math.max(0, rider.riddenDistance + remaining - rider.directDistance * 1.4 - 100) : rider.excessDistance;
         const extraLoss = Math.max(0, excess - rider.excessDistance) * .035;
         rider.excessDistance = Math.max(excess, rider.excessDistance);
         const healthLost = Math.max(0, rider.startHealth - (Number.isFinite(lastPlayer.health) ? lastPlayer.health : 100));

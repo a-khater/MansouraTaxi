@@ -288,9 +288,102 @@ export function createWorld(scene, data) {
     for(const group of chunks.values()){const c=group.userData.center,d=Math.hypot(x-c.x,z-c.z);group.visible=d<1050;for(const child of group.children)if(child.userData.detail)child.visible=d<720;}
   }
   setFocus(data.start.x,data.start.z);
-  return {root,roads,bounds,colliders,landmarks:data.landmarks,start:data.start,groundHeight:.14,stats:{...data.stats,chunks:chunks.size},mapData:data,setFocus,heightAt:()=>.14,
+  const spatialQueries=createSpatialQueries(colliders);
+  function findSafeRoadPoint(point){
+    const fallback=()=>({x:data.start.x,z:data.start.z,heading:data.start.heading});
+    if(!Number.isFinite(point?.x)||!Number.isFinite(point?.z))return fallback();
+    const wrap=a=>Math.atan2(Math.sin(a),Math.cos(a));
+    let best=null,bestDistance2=120*120,bestAngle=Infinity;
+    const safe=(x,z,heading)=>{
+      const fx=-Math.sin(heading),fz=-Math.cos(heading);
+      for(const offset of [-1.2,0,1.2]){
+        const px=x+fx*offset,pz=z+fz*offset;
+        if(px-.9<bounds.minX||px+.9>bounds.maxX||pz-.9<bounds.minZ||pz+.9>bounds.maxZ||spatialQueries.isBlocked(px,pz,.9))return false;
+      }
+      return true;
+    };
+    for(const segment of roads.segments)for(let i=1;i<segment.points.length;i++){
+      const a=segment.points[i-1],b=segment.points[i],dx=b.x-a.x,dz=b.z-a.z,length2=dx*dx+dz*dz;if(length2<.0025)continue;
+      const length=Math.sqrt(length2),projection=Math.max(0,Math.min(1,((point.x-a.x)*dx+(point.z-a.z)*dz)/length2));
+      if((a.x+dx*projection-point.x)**2+(a.z+dz*projection-point.z)**2>bestDistance2)continue;
+      let heading=Math.atan2(-dx,-dz)+(segment.oneway===-1?Math.PI:0);
+      if(!segment.oneway&&Number.isFinite(point.heading)&&Math.abs(wrap(heading+Math.PI-point.heading))<Math.abs(wrap(heading-point.heading)))heading+=Math.PI;
+      heading=wrap(heading);const angle=Number.isFinite(point.heading)?Math.abs(wrap(heading-point.heading)):0;
+      for(const offset of [0,-5,5,-10,10,-20,20]){
+        const t=Math.max(0,Math.min(1,projection+offset/length)),x=a.x+dx*t,z=a.z+dz*t,distance2=(x-point.x)**2+(z-point.z)**2;
+        if(distance2>bestDistance2+1e-8||distance2>=bestDistance2-1e-8&&angle>=bestAngle||!safe(x,z,heading))continue;
+        best={x,z,heading};bestDistance2=distance2;bestAngle=angle;
+      }
+    }
+    return best||fallback();
+  }
+  return {root,roads,bounds,colliders,landmarks:data.landmarks,start:data.start,groundHeight:.14,stats:{...data.stats,chunks:chunks.size},mapData:data,setFocus,heightAt:()=>.14,...spatialQueries,findSafeRoadPoint,
     getDistrict(x,z){const p=nearestRoad({x,z},roads),s=roads.segments[p.segmentIndex];return {name:s?.nameEn||s?.name||'Mansoura',arabic:s?.name||'المنصورة'};},
     setNight(night){litGlass.emissiveIntensity=night?1.65:.12;glass.emissive.set(night?'#d3b987':'#000000');glass.emissiveIntensity=night?.035:0;lampGlow.emissiveIntensity=night?3:.35;waterUniforms.deep.value.set(night?'#183f4c':'#397b7c');waterUniforms.haze.value.set(night?'#172e39':'#c3bd9f');},
     update(dt,time=0,focus){waterUniforms.time.value=time;if(focus)setFocus(focus);for(const b of boats){b.group.position.y=-.13+Math.sin(time*.6+b.phase)*.07;b.group.rotation.z=Math.sin(time*.45+b.phase)*.009;}}
   };
+}
+
+/** Static polygon queries used by camera collision and safe vehicle recovery.
+ * constrainCamera returns a plain {x,y,z,blocked} object. Its anchor should be
+ * the taxi roof, and the desired point can be the camera after smoothing.
+ */
+export function createSpatialQueries(colliders) {
+  const cellSize=100,buckets=new Map();
+  const inside=(x,z,ring)=>{let yes=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const a=ring[i],b=ring[j];if((a.z>z)!==(b.z>z)&&x<(b.x-a.x)*(z-a.z)/(b.z-a.z)+a.x)yes=!yes;}return yes;};
+  const ringFor=c=>c.polygon||[{x:c.minX,z:c.minZ},{x:c.maxX,z:c.minZ},{x:c.maxX,z:c.maxZ},{x:c.minX,z:c.maxZ}];
+  const distance2=(x,z,a,b)=>{const dx=b.x-a.x,dz=b.z-a.z,length=dx*dx+dz*dz,t=length?Math.max(0,Math.min(1,((x-a.x)*dx+(z-a.z)*dz)/length)):0;return (x-a.x-dx*t)**2+(z-a.z-dz*t)**2;};
+  const circleOverlaps=(c,x,z,radius)=>{
+    const ring=ringFor(c),holes=c.holes||[];
+    if(inside(x,z,ring)&&!holes.some(h=>inside(x,z,h)))return true;
+    for(const boundary of [ring,...holes])for(let i=0;i<boundary.length;i++)if(distance2(x,z,boundary[i],boundary[(i+1)%boundary.length])<=radius*radius+1e-10)return true;
+    return false;
+  };
+  for(let i=0;i<colliders.length;i++){
+    const c=colliders[i];
+    for(let x=Math.floor(c.minX/cellSize);x<=Math.floor(c.maxX/cellSize);x++)for(let z=Math.floor(c.minZ/cellSize);z<=Math.floor(c.maxZ/cellSize);z++){
+      const key=`${x}:${z}`;if(!buckets.has(key))buckets.set(key,[]);buckets.get(key).push(i);
+    }
+  }
+  function candidates(minX,maxX,minZ,maxZ){
+    const ids=new Set();
+    for(let x=Math.floor(minX/cellSize);x<=Math.floor(maxX/cellSize);x++)for(let z=Math.floor(minZ/cellSize);z<=Math.floor(maxZ/cellSize);z++)for(const id of buckets.get(`${x}:${z}`)||[])ids.add(id);
+    return [...ids].map(i=>colliders[i]);
+  }
+  function isBlocked(x,z,radius=0){
+    radius=Math.max(0,radius);
+    return candidates(x-radius,x+radius,z-radius,z+radius).some(c=>!c.disabled&&circleOverlaps(c,x,z,radius));
+  }
+  function constrainCamera(anchor,desired,padding=.35){
+    padding=Math.max(0,padding);const dx=desired.x-anchor.x,dy=desired.y-anchor.y,dz=desired.z-anchor.z;
+    let first=Infinity;
+    const nearby=candidates(Math.min(anchor.x,desired.x)-padding,Math.max(anchor.x,desired.x)+padding,Math.min(anchor.z,desired.z)-padding,Math.max(anchor.z,desired.z)+padding);
+    const slab=(range,origin,delta,min,max)=>{if(Math.abs(delta)<1e-10)return origin>=min&&origin<=max?range:null;const a=(min-origin)/delta,b=(max-origin)/delta;const lo=Math.max(range[0],Math.min(a,b)),hi=Math.min(range[1],Math.max(a,b));return lo<=hi?[lo,hi]:null;};
+    for(const c of nearby){
+      if(c.disabled||c.type==='water')continue;
+      const top=Number.isFinite(c.height)?c.height:Infinity,bottom=c.minHeight||0;
+      const heightInterval=slab([0,Math.min(1,first)],anchor.y,dy,bottom-padding,top+padding);
+      if(!heightInterval)continue;
+      const cuts=[heightInterval[0],heightInterval[1]];
+      const addRange=range=>{if(range){cuts.push(Math.max(heightInterval[0],range[0]),Math.min(heightInterval[1],range[1]));}};
+      for(const ring of [ringFor(c),...(c.holes||[])])for(let i=0;i<ring.length;i++){
+        const a=ring[i],b=ring[(i+1)%ring.length],ex=b.x-a.x,ez=b.z-a.z,length=Math.hypot(ex,ez);if(length<1e-8)continue;
+        const ux=ex/length,uz=ez/length;
+        let interval=slab(heightInterval,(anchor.x-a.x)*-uz+(anchor.z-a.z)*ux,dx*-uz+dz*ux,-padding,padding);
+        if(interval)interval=slab(interval,(anchor.x-a.x)*ux+(anchor.z-a.z)*uz,dx*ux+dz*uz,0,length);
+        addRange(interval);
+        const aa=dx*dx+dz*dz,bb=2*((anchor.x-a.x)*dx+(anchor.z-a.z)*dz),cc=(anchor.x-a.x)**2+(anchor.z-a.z)**2-padding*padding,disc=bb*bb-4*aa*cc;
+        if(aa>1e-12&&disc>=0)addRange([(-bb-Math.sqrt(disc))/(2*aa),(-bb+Math.sqrt(disc))/(2*aa)]);
+      }
+      const sorted=cuts.filter(t=>t>=heightInterval[0]-1e-10&&t<=heightInterval[1]+1e-10).sort((a,b)=>a-b);
+      for(let i=1;i<sorted.length;i++){
+        const lo=sorted[i-1],hi=sorted[i];if(hi-lo<1e-10)continue;const t=(lo+hi)/2;
+        if(circleOverlaps(c,anchor.x+dx*t,anchor.z+dz*t,padding)){first=Math.min(first,lo);break;}
+      }
+    }
+    if(!Number.isFinite(first))return {x:desired.x,y:desired.y,z:desired.z,blocked:false};
+    const t=Math.max(0,first-.04/Math.max(.001,Math.hypot(dx,dy,dz)));
+    return {x:anchor.x+dx*t,y:anchor.y+dy*t,z:anchor.z+dz*t,blocked:true};
+  }
+  return {isBlocked,constrainCamera};
 }

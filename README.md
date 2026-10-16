@@ -1,4 +1,4 @@
-# Mansoura Taxi · 0.2
+# Mansoura Taxi · 0.2.1
 
 A playable 3D browser game set on mapped streets around Al-Mashaya, Al-Gomhouria and Mansoura University. Drive an original burgundy-and-cream Verna LC-inspired taxi, carry up to four unrelated passengers, and negotiate a back seat full of opinions. The Egyptian Arabic black comedy is fictional, informed by documented taxi complaints.
 
@@ -73,6 +73,10 @@ The build copies the static game, vendored renderer and assets into `dist/`. `np
 The Node tests cover driving/collision behavior, road routing, geographic construction and the fare engine. Fare tests exercise three simultaneous riders with individual destinations/payments, the four-seat limit, continuing requests, negotiation, sharing disclosures, patience, early exits and duplicate-payment prevention. These simulation tests do not establish visual quality or hardware performance.
 
 `scripts/qa-browser.mjs` provides a separate Chromium/WebGL smoke pass and desktop/mobile screenshots. It requires an installed Playwright module through `TAXI_QA_MODULE` and its browser cache through `PLAYWRIGHT_BROWSERS_PATH`; run it against the local server. When present, results and screenshots are written to `artifacts/`. A physical-device play-through remains useful for handling, touch reach and performance.
+
+`scripts/qa-audit.mjs` adds saved-paint reloads, held mobile pedals, pause/input recovery, odometer preservation, short landscape and small portrait hit testing, plus frame-time samples for both graphics modes. The frame samples describe the test browser, not all devices.
+
+The 0.2.1 audit fixes camera/building clipping, recovery inside conflicting source footprints, abrupt boost release, persistent traffic queues, and passenger stop selection based on straight-line distance. Fare changes also preserve shared quotes when haggling, keep due drop-offs ahead of new pickups, and allow an impatient rider to leave at the next safe stop.
 
 ## Project structure
 

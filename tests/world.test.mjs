@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import * as THREE from '../vendor/three.module.js';
-import {createWorld} from '../world.js';
+import {createWorld,createSpatialQueries} from '../world.js';
 import {nearestRoad} from '../navigation.js';
 
 globalThis.document={createElement(tag){assert.equal(tag,'canvas');return{getContext(){return{fillRect(){},strokeRect(){},fillText(){},beginPath(){},moveTo(){},lineTo(){},stroke(){}}}};}};
@@ -94,4 +94,65 @@ test('scene transforms remain finite and water/night updates restore daylight co
   const day=water.material.uniforms.deep.value.clone();world.setNight(true);assert.ok(!water.material.uniforms.deep.value.equals(day));
   world.update(.016,1000,world.start);assert.equal(water.material.uniforms.time.value,1000);world.setNight(false);assert.ok(water.material.uniforms.deep.value.equals(day));
   scene.updateMatrixWorld(true);scene.traverse(o=>{assert.ok(o.matrixWorld.elements.every(Number.isFinite));if(o.isInstancedMesh)assert.ok(o.instanceMatrix.array.every(Number.isFinite));});
+});
+
+test('camera collision resolves reproduced legal-road poses without changing geographic geometry',()=>{
+  const cases=[
+    {taxi:{x:-384.078,y:1.7,z:-193.519},camera:{x:-393.4049159,y:6.1,z:-202.5748622}},
+    {taxi:{x:-324.249,y:1.7,z:-236.254},camera:{x:-333.0936714,y:6.1,z:-245.7814229}},
+    {taxi:{x:383.239,y:1.7,z:-293.907},camera:{x:370.4572775,y:6.1,z:-296.2792498}},
+    {taxi:{x:255.865,y:1.7,z:-219.256},camera:{x:255.9991993,y:6.1,z:-206.2566927}},
+  ];
+  const before=JSON.stringify(data.buildings);
+  for(const {taxi,camera}of cases){
+    const result=world.constrainCamera(taxi,camera,.35);
+    assert.equal(result.blocked,true);assert.equal(world.isBlocked(result.x,result.z,.35),false);
+    assert.ok(Math.hypot(result.x-taxi.x,result.z-taxi.z)<Math.hypot(camera.x-taxi.x,camera.z-taxi.z));
+  }
+  assert.equal(JSON.stringify(data.buildings),before);
+  assert.equal(world.isBlocked(world.start.x,world.start.z,1),false);
+  assert.equal(world.isBlocked(-1678.013,-152.853,1),true,'known source-road/footprint conflict is detectable before recovery');
+});
+
+test('spatial camera queries respect building heights, roofs, concave recesses and courtyards',()=>{
+  const rectangle=(minX,maxX,minZ,maxZ,height)=>({minX,maxX,minZ,maxZ,height,type:'building',polygon:[{x:minX,z:minZ},{x:maxX,z:minZ},{x:maxX,z:maxZ},{x:minX,z:maxZ}]});
+  const low=createSpatialQueries([rectangle(4,6,-2,2,.6)]);
+  assert.equal(low.constrainCamera({x:0,y:1.7,z:0},{x:10,y:6.1,z:0}).blocked,false,'camera sees over a low wall');
+  const roof=createSpatialQueries([rectangle(4,6,-2,2,4)]);
+  assert.equal(roof.constrainCamera({x:0,y:7,z:0},{x:10,y:7,z:0}).blocked,false);
+  const top=roof.constrainCamera({x:5,y:7,z:0},{x:5,y:3,z:0});
+  assert.equal(top.blocked,true);assert.ok(top.y>4.35,'descending camera stops above the padded roof');
+  const courtyard=rectangle(0,20,0,20,10);courtyard.holes=[[{x:5,z:5},{x:15,z:5},{x:15,z:15},{x:5,z:15}]];
+  const court=createSpatialQueries([courtyard]);
+  assert.equal(court.isBlocked(10,10,1),false);assert.equal(court.isBlocked(4.8,10,.3),true);
+  assert.equal(court.constrainCamera({x:10,y:2,z:10},{x:13,y:6,z:10}).blocked,false);
+  const wall=court.constrainCamera({x:10,y:2,z:10},{x:18,y:6,z:10});assert.equal(wall.blocked,true);assert.ok(wall.x<14.65);
+  const concave=rectangle(0,8,0,8,10);concave.polygon=[{x:0,z:0},{x:8,z:0},{x:8,z:3},{x:3,z:3},{x:3,z:8},{x:0,z:8}];
+  const recess=createSpatialQueries([concave]);assert.equal(recess.isBlocked(5,5,.35),false);
+  assert.equal(recess.constrainCamera({x:5,y:2,z:5},{x:10,y:3,z:5}).blocked,false);
+  assert.equal(recess.constrainCamera({x:5,y:2,z:5},{x:1,y:3,z:5}).blocked,true);
+  const water=rectangle(0,8,0,8,0);water.type='water';const river=createSpatialQueries([water]);
+  assert.equal(river.isBlocked(4,4,1),true);assert.equal(river.constrainCamera({x:-2,y:2,z:4},{x:10,y:4,z:4}).blocked,false);
+});
+
+test('safe recovery avoids actual source overlaps and keeps the full Verna clear near the Nile',()=>{
+  const assertSafe=p=>{
+    const fx=-Math.sin(p.heading),fz=-Math.cos(p.heading);
+    for(const offset of [-1.2,0,1.2])assert.equal(world.isBlocked(p.x+fx*offset,p.z+fz*offset,.9),false);
+    assert.ok(nearestRoad(p,world.roads).distance<.001);
+    return p;
+  };
+  const conflict={x:-1678.013,z:-152.853,heading:0};
+  assert.equal(world.isBlocked(conflict.x,conflict.z,.9),true);
+  const recovered=assertSafe(world.findSafeRoadPoint(conflict));
+  assert.ok(Math.hypot(recovered.x-conflict.x,recovered.z-conflict.z)<120);
+  assert.ok(Math.hypot(recovered.x-conflict.x,recovered.z-conflict.z)>1);
+  const shore={x:0,z:-450};assert.equal(world.isBlocked(shore.x,shore.z),true);
+  const bank=assertSafe(world.findSafeRoadPoint(shore));assert.ok(Math.hypot(bank.x-shore.x,bank.z-shore.z)<120);
+  const ordinary=assertSafe(world.findSafeRoadPoint(world.start));
+  assert.ok(Math.hypot(ordinary.x-world.start.x,ordinary.z-world.start.z)<.01);
+  const edge=nearestRoad(ordinary,world.roads),segment=world.roads.segments[edge.segmentIndex];
+  assert.equal(segment.oneway,1);assert.ok(Math.abs(Math.atan2(Math.sin(ordinary.heading-edge.heading),Math.cos(ordinary.heading-edge.heading)))<.00001);
+  const fallback=world.findSafeRoadPoint({x:100000,z:100000});
+  assert.deepEqual(fallback,{x:world.start.x,z:world.start.z,heading:world.start.heading});assertSafe(fallback);
 });

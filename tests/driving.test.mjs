@@ -41,6 +41,18 @@ test('reverse and brakes use signed speed without unintended forward motion', ()
   assert.ok(driving.state.speed < forwardSpeed && driving.state.speed > 0);
 });
 
+test('releasing boost eases toward cruise speed instead of braking instantly', () => {
+  const { driving } = setup();
+  advance(driving, 12, { throttle: 1, boost: true });
+  const boostedSpeed = driving.state.speed;
+  assert.ok(boostedSpeed > 49);
+  driving.update(dt, { throttle: 1 });
+  assert.ok(driving.state.speed > boostedSpeed - .2, 'one frame only sheds the normal settling acceleration');
+  assert.ok(driving.state.speed < boostedSpeed);
+  advance(driving, 2, { throttle: 1 });
+  assert.equal(driving.state.speed, 40);
+});
+
 test('substeps prevent tunneling through building walls and record damage', () => {
   const { driving } = setup([{ minX: -20, maxX: 20, minZ: -45, maxZ: -40 }]);
   advance(driving, 5, { throttle: 1 });
@@ -114,6 +126,17 @@ test('mapped courtyard holes remain empty while their surrounding walls collide'
   assert.ok(driving.state.health < 100);
 });
 
+test('exact footprint-edge contact resolves away from the wall without sideways teleporting', () => {
+  for (const reverseWinding of [false, true]) {
+    const polygon = [{ x: -10, z: -20 }, { x: 10, z: -20 }, { x: 10, z: -40 }, { x: -10, z: -40 }];
+    const { driving } = setup([{ polygon: reverseWinding ? polygon.reverse() : polygon }]);
+    driving.reset({ x: 0, z: -18.72 });
+    driving.update(dt, {});
+    assert.ok(Math.abs(driving.state.x) < .001, 'a horizontal wall cannot push the taxi sideways');
+    assert.ok(driving.state.z > -18, 'the correction moves the front bumper clear of the wall');
+  }
+});
+
 test('mapped traffic obeys directed OSM polylines and shares intersection nodes', () => {
   const { scene } = setup();
   const points = [{ x: 0, z: 0, nodeId: 1 }, { x: 0, z: -100, nodeId: 2 }, { x: 100, z: -100, nodeId: 3 }, { x: 100, z: 0, nodeId: 4 }, { x: 0, z: 0, nodeId: 1 }];
@@ -131,6 +154,35 @@ test('reverse-only OSM ways spawn traffic in their legal direction', () => {
   const { scene } = setup();
   const traffic = makeTraffic(scene, { segments: [{ id: 'reverse', points: [{ x: 0, z: 0, nodeId: 1 }, { x: 0, z: -100, nodeId: 2 }], width: 4, oneway: -1, highway: 'residential' }] });
   assert.ok(traffic.cars.every(car => car.edge.reverse && car.edge.dz > 0));
+});
+
+test('traffic exits at a clipped one-way boundary without permanently blocking its lane', () => {
+  const traffic = makeTraffic(new THREE.Scene(), { segments: [{ id: 'clipped-road', oneway: 1, width: 6, highway: 'residential', points: [{ x: 0, z: 0, nodeId: 1 }, { x: 0, z: -300, nodeId: 'clip:boundary' }] }] });
+  const previous = traffic.cars.map(car => car.routeDistance);
+  let completedTrips = 0;
+  for (let frame = 0; frame < 3600; frame++) {
+    traffic.update(1 / 30);
+    traffic.cars.forEach((car, i) => { if (car.routeDistance < previous[i] - 5) completedTrips++; previous[i] = car.routeDistance; });
+  }
+  assert.ok(completedTrips > traffic.cars.length, 'completed traffic journeys re-enter the network');
+  assert.ok(traffic.cars.filter(car => car.speed > .5).length >= traffic.cars.length / 2, 'a permanent stopped queue does not consume the population');
+  assert.ok(traffic.cars.every(car => !car.edge.reverse), 'recycling preserves the legal one-way direction');
+});
+
+test('crossing traffic takes turns instead of yielding to each other forever', () => {
+  const traffic = makeTraffic(new THREE.Scene(), { segments: [
+    { id: 'north', oneway: 1, width: 3, points: [{ x: 0, z: 80, nodeId: 's' }, { x: 0, z: 0, nodeId: 'c' }, { x: 0, z: -80, nodeId: 'n' }] },
+    { id: 'east', oneway: 1, width: 3, points: [{ x: -80, z: 0, nodeId: 'w' }, { x: 0, z: 0, nodeId: 'c' }, { x: 80, z: 0, nodeId: 'e' }] },
+  ] });
+  const north = traffic.cars.find(c => c.edge.from === 's').edge, east = traffic.cars.find(c => c.edge.from === 'w').edge;
+  traffic.setDensity(2 / traffic.cars.length);
+  const [first, second] = traffic.cars;
+  Object.assign(first, { edge: north, routeDistance: 55, x: 0, z: 25, heading: 0, speed: 6, cruise: 8 });
+  Object.assign(second, { edge: east, routeDistance: 55, x: -25, z: 0, heading: -Math.PI / 2, speed: 6, cruise: 8 });
+  for (let frame = 0; frame < 480; frame++) traffic.update(dt);
+  assert.equal(first.edge.from, 'c', 'first driver clears the shared junction');
+  assert.equal(second.edge.from, 'c', 'yielding driver also clears the shared junction');
+  assert.ok(first.routeDistance > 10 && second.routeDistance > 10);
 });
 
 test('adjacent lanes on a six-meter street pass without a false traffic impact', () => {

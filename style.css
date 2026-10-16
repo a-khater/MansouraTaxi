@@ -668,3 +668,33 @@ kbd { font-family: 'Barlow', sans-serif; display: inline-flex; justify-content: 
   .map-attribution { left: 15px; bottom: 64px; font-size: 5px; }
   body:not(.playing) .map-attribution { bottom: 4px; }
 }
+
+/* Keep decisions and driving buttons in separate areas on compact screens. */
+.street-dialogue { pointer-events: none; }
+@media (max-height: 480px) and (min-width: 601px) {
+  .bottom-left { left: 15px; right: auto; top: auto; bottom: 84px; width: 110px; }
+  .bottom-left .minimap-button { display: flex; align-items: center; justify-content: center; height: 34px; padding: 0 12px; background: rgba(12, 25, 24, .9); border-color: rgba(246, 182, 73, .65); }
+  .bottom-left .minimap-button::before { content: 'MAP ↗'; color: var(--amber); font-size: 10px; font-weight: 700; letter-spacing: 1.8px; }
+  .bottom-left .minimap-button canvas, .bottom-left .map-north, .bottom-left .map-expand,
+  .bottom-left .map-location, .bottom-left .health-line { display: none; }
+  .street-dialogue { left: 245px; right: 190px; width: auto; bottom: 100px; transform: none; max-height: 95px; }
+  .street-dialogue #dialogueText { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; font-size: 12px; line-height: 1.7; }
+  .shift-status .passenger-list { display: none; }
+  .hud:has(#fareChoices:not(.hidden)) .interaction { display: none; }
+}
+@media (max-width: 375px) and (max-height: 650px) {
+  .hud:has(#fareChoices:not(.hidden)) .speedometer,
+  .hud:has(#fareChoices:not(.hidden)) .passenger-list,
+  .hud:has(#fareChoices:not(.hidden)) .interaction { display: none; }
+  .hud:has(#fareChoices:not(.hidden)) .bottom-left { top: 246px; bottom: auto; left: auto; right: 10px; width: 120px; }
+  .hud:has(#fareChoices:not(.hidden)) .minimap-button { display: flex; justify-content: center; align-items: center; height: 34px; padding: 0 10px; border-color: rgba(246, 182, 73, .65); background: rgba(12, 25, 24, .92); }
+  .hud:has(#fareChoices:not(.hidden)) .minimap-button::before { content: 'MAP ↗'; color: var(--amber); font-size: 10px; font-weight: 700; letter-spacing: 1.5px; }
+  .hud:has(#fareChoices:not(.hidden)) .minimap-button canvas,
+  .hud:has(#fareChoices:not(.hidden)) .map-north,
+  .hud:has(#fareChoices:not(.hidden)) .map-expand,
+  .hud:has(#fareChoices:not(.hidden)) .map-location,
+  .hud:has(#fareChoices:not(.hidden)) .health-line { display: none; }
+  .hud:has(#fareChoices:not(.hidden)) .street-dialogue { left: 10px; right: 10px; bottom: 88px; width: auto; max-height: 100px; padding: 7px 11px 9px; }
+  .hud:has(#fareChoices:not(.hidden)) #dialogueText { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; font-size: 12px; line-height: 1.75; }
+  body.playing:has(#fareChoices:not(.hidden)) > .map-attribution { top: 285px; bottom: auto; right: 10px; left: auto; max-width: 120px; font-size: 5px; }
+}

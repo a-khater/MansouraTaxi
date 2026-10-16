@@ -36,7 +36,7 @@ async function init() {
     renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.12;
-    scene = new THREE.Scene(); scene.background = new THREE.Color('#bfc3b1'); scene.fog = new THREE.Fog('#c3bd9f', 240, 1900);
+    scene = new THREE.Scene(); scene.background = new THREE.Color('#bfc3b1'); scene.fog = new THREE.Fog('#c3bd9f', 240, 1050);
     camera = new THREE.PerspectiveCamera(58, innerWidth / innerHeight, .15, 6500);
     hemisphere = new THREE.HemisphereLight('#d5e6ec', '#86725b', 2.2); scene.add(hemisphere);
     ambient = new THREE.AmbientLight('#e7cda8', .45); scene.add(ambient);
@@ -142,6 +142,11 @@ function interact() {
 
 const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
 
+function setHTMLIfChanged(id, html) {
+  const element = $(id);
+  if (element._renderedHTML !== html) { element.innerHTML = html; element._renderedHTML = html; }
+}
+
 function chooseFare(action) {
   if (!playing || paused || !fareSystem.state.active) return;
   const methods = { ask: 'askDestination', accept: 'accept', haggle: 'haggle', reject: 'reject', share: 'shareRoute' };
@@ -166,8 +171,8 @@ function updateFareHUD() {
   $('shiftStatus').classList.toggle('hidden', !state.active); $('fareChoices').classList.toggle('hidden', !state.active || !offer || offer.accepted);
   $('passengerCount').textContent = state.passengers.length;
   $('reputationValue').textContent = Math.round(state.reputation);
-  $('seatSlots').innerHTML = Array.from({ length: 4 }, (_, i) => `<span class="${state.passengers[i] ? 'occupied' : ''}">${state.passengers[i] ? '●' : '○'}</span>`).join('');
-  $('passengerList').innerHTML = state.passengers.map(p => `<div class="passenger-row"><span>●</span><div><strong>${escapeHTML(p.name || p.label)}</strong><small>${escapeHTML(p.destination?.name || p.destination?.arabic)}</small></div><span>${Math.round(p.patience ?? 100)}%</span></div>`).join('');
+  setHTMLIfChanged('seatSlots', Array.from({ length: 4 }, (_, i) => `<span class="${state.passengers[i] ? 'occupied' : ''}">${state.passengers[i] ? '●' : '○'}</span>`).join(''));
+  setHTMLIfChanged('passengerList', state.passengers.map(p => `<div class="passenger-row"><span>●</span><div><strong>${escapeHTML(p.name || p.label)}</strong><small>${escapeHTML(p.destination?.name || p.destination?.arabic)}</small></div><span>${Math.round(p.patience ?? 100)}%</span></div>`).join(''));
   if (!state.active) return;
   const mood = state.driverMood > 70 ? 'الكابتن رايق' : state.driverMood > 40 ? 'وردية طويلة' : 'على آخره';
   $('dispatchLabel').textContent = offer && !offer.accepted ? 'A HAND GOES UP · إشارة من الرصيف' : `${state.passengers.length} ON BOARD · ${mood}`;
@@ -175,7 +180,7 @@ function updateFareHUD() {
   $('objectiveDetail').textContent = offer && !offer.accepted ? `${offer.scene?.label || offer.appearance || ''} · ${offer.askedDestination ? offer.destination?.name || offer.destination?.arabic : 'اسأل الأول: رايح فين؟'} · ${offer.fare} EGP` : target?.kind === 'pickup' ? 'Stop by the passenger and press E. الاتفاق قبل الركوب.' : state.passengers.length ? 'Every rider has a destination. Stop in the marker, then press E.' : 'The next passenger has an opinion. And a destination.';
   $('fareTimer').textContent = offer ? `${Math.ceil(offer.secondsLeft)}s` : '';
   $('fareProgress').classList.toggle('hidden', !offer);
-  if (offer) $('fareProgress').firstElementChild.style.width = `${clamp(offer.secondsLeft / 75 * 100, 0, 100)}%`;
+  if (offer) $('fareProgress').firstElementChild.style.width = `${clamp(offer.secondsLeft / (offer.maxSeconds || 100) * 100, 0, 100)}%`;
   $('dispatchButton').innerHTML = 'END THE SHIFT <span>×</span>';
   const key = target ? `${target.kind}:${target.passengerId}:${target.x}:${target.z}` : '';
   if (key !== lastTargetKey) { lastTargetKey = key; rebuildRoute(); }
@@ -295,6 +300,10 @@ function updateCamera(dt) {
   }
   const smoothing = 1 - Math.exp(-(cameraMode === 2 && playing ? 16 : 5) * dt);
   camera.position.lerp(cameraDesired, smoothing); cameraTarget.lerp(lookDesired, smoothing); camera.lookAt(cameraTarget);
+  if (playing && cameraMode !== 2 && world.constrainCamera) {
+    const safe = world.constrainCamera({ x: s.x, y: 1.7, z: s.z }, camera.position, .35);
+    camera.position.set(safe.x, safe.y, safe.z); camera.lookAt(cameraTarget);
+  }
   const fov = playing && keys.has('ShiftLeft') ? 65 : 58; camera.fov += (fov - camera.fov) * smoothing; camera.updateProjectionMatrix();
   sun.position.set(s.x - 150, 180, s.z - 230); sun.target.position.set(s.x, 0, s.z); sun.target.updateMatrixWorld();
   // Keep the headlight nodes active when hiding the body for the bonnet view.
@@ -312,7 +321,9 @@ function liftVehicles() {
 function resetTaxi() {
   const point = nearestRoad(driving.state, world.roads);
   const segment = world.roads.segments[point.segmentIndex];
-  driving.reset({ x: point.x, z: point.z, heading: (point.heading ?? world.start.heading) + (segment?.oneway === -1 ? Math.PI : 0) });
+  const recovered = world.findSafeRoadPoint?.(driving.state) || { x: point.x, z: point.z, heading: (point.heading ?? world.start.heading) + (segment?.oneway === -1 ? Math.PI : 0) };
+  const distance = driving.state.distance;
+  driving.reset(recovered); driving.state.distance = distance;
   keys.clear(); touch.clear(); rebuildRoute();
 }
 
@@ -334,6 +345,7 @@ function showPanel(type) {
       const point = nearestRoad({ x: ((event.clientX - box.left) * canvas.width / box.width - map.w / 2) / map.scale + map.cx, z: ((event.clientY - box.top) * canvas.height / box.height - map.h / 2) / map.scale + map.cz }, world.roads);
       const candidateRoute = routeTo(driving.state, point, world.roads);
       if (candidateRoute.reachable === false) { toast('That street is disconnected from this driving network. Choose a nearby street.'); return; }
+      if (routeTo(point, driving.state, world.roads).reachable === false) { toast('That map-edge street has no mapped return route. Choose a nearby street.'); return; }
       waypoint = { ...point, name: point.nameEn || point.name || 'Your next stop' };
       closePanel(); if (!playing) { mode = night ? 'night' : 'roam'; const selected = waypoint; startGame(); waypoint = selected; } setFreeObjective(); toast('Destination set. Follow the amber route.');
     });

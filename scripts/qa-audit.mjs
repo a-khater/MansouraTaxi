@@ -1,0 +1,75 @@
+import assert from 'node:assert/strict';
+import { writeFile, mkdir } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+const { chromium } = await import(pathToFileURL(process.env.TAXI_QA_MODULE));
+const browser = await chromium.launch({ headless: true, channel: 'chromium' });
+const artifacts = resolve(import.meta.dirname, '..', 'artifacts'); await mkdir(artifacts, { recursive: true });
+const report = { checks: [], timing: {}, issues: [] };
+const pass = (name, value) => { assert.ok(value, name); report.checks.push(name); console.log('PASS ' + name); };
+const url = process.env.TAXI_QA_URL || 'http://127.0.0.1:8000';
+const open = async viewport => {
+  const page = await browser.newPage({ viewport, deviceScaleFactor: 1 });
+  page.on('pageerror', e => report.issues.push(e.message));
+  await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 });
+  await page.waitForFunction(() => window.mansouraTaxi?.state.render.calls > 0);
+  return page;
+};
+const sample = page => page.evaluate(async () => {
+  const samples = []; let previous;
+  for (let i = 0; i < 100; i++) {
+    const time = await new Promise(requestAnimationFrame);
+    if (previous !== undefined) samples.push(time - previous); previous = time;
+  }
+  samples.sort((a,b)=>a-b);
+  return { medianMs: samples[Math.floor(samples.length*.5)], p95Ms: samples[Math.floor(samples.length*.95)], ...window.mansouraTaxi.state.render };
+});
+try {
+  const page = await open({ width: 1366, height: 768 });
+  report.timing.detailed = await sample(page);
+  await page.locator('[data-panel="garage"]').click(); await page.locator('[data-paint="#3e7079"]').click();
+  await page.reload({ waitUntil: 'networkidle' }); await page.waitForFunction(() => window.mansouraTaxi);
+  pass('taxi paint persists across a real reload', await page.evaluate(() => window.mansouraTaxi.state.progress.paint === '#3e7079'));
+  await page.locator('[data-panel="garage"]').click(); await page.locator('[data-paint="#853f42"]').click(); await page.locator('#closePanel').click();
+  await page.locator('#settingsButton').click(); await page.locator('[data-quality="low"]').click(); await page.locator('#closePanel').click();
+  report.timing.lightweight = await sample(page);
+  await page.locator('#playButton').click();
+  const start = await page.evaluate(() => window.mansouraTaxi.state.driving);
+  const pedal = page.locator('[data-touch="throttle"]');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await pedal.waitFor({ state: 'visible' });
+  const p = await pedal.boundingBox();
+  await page.mouse.move(p.x+p.width/2,p.y+p.height/2); await page.mouse.down(); await page.waitForTimeout(1200);
+  const accelerating = await page.evaluate(() => window.mansouraTaxi.state.driving);
+  await page.mouse.up();
+  pass('held mobile accelerator moves the taxi', Math.hypot(accelerating.x-start.x,accelerating.z-start.z)>1);
+  const brake = await page.locator('[data-touch="brake"]').boundingBox();
+  await page.mouse.move(brake.x+brake.width/2,brake.y+brake.height/2); await page.mouse.down(); await page.waitForTimeout(1200); await page.mouse.up();
+  pass('mobile brake stops the taxi', await page.evaluate(() => Math.abs(window.mansouraTaxi.state.driving.speed)<.5));
+  const odometer = await page.evaluate(() => window.mansouraTaxi.state.driving.distance);
+  await page.keyboard.press('KeyR');
+  pass('taxi recovery preserves the driven distance', await page.evaluate(distance => window.mansouraTaxi.state.driving.distance === distance && window.mansouraTaxi.state.driving.health === 100, odometer));
+  await page.keyboard.down('KeyW'); await page.waitForTimeout(300); await page.keyboard.press('KeyM');
+  pass('map clears held acceleration and pauses the game', await page.evaluate(() => window.mansouraTaxi.state.paused));
+  await page.locator('#closePanel').click();
+  const released = await page.evaluate(() => window.mansouraTaxi.state.driving.speed);
+  await page.waitForTimeout(700);
+  pass('closing the map does not leave a stuck accelerator', await page.evaluate(speed => window.mansouraTaxi.state.driving.speed <= speed+.1, released));
+  await page.keyboard.up('KeyW');
+  await page.keyboard.press('Escape'); await page.locator('[data-action="menu"]').click();
+  await page.setViewportSize({ width: 844, height: 390 });
+  pass('landscape menu play button fits the viewport', await page.locator('#playButton').evaluate(e => { const b=e.getBoundingClientRect();return b.top>=0&&b.bottom<=innerHeight; }));
+  await page.locator('[data-mode="shift"]').click(); await page.locator('#playButton').click();
+  await page.screenshot({ animations:'disabled', path:resolve(artifacts,'audit-landscape.png') });
+  const boxes = await page.locator('[data-fare-action]').evaluateAll(elements => elements.map(e => {const b=e.getBoundingClientRect();return {top:b.top,bottom:b.bottom,left:b.left,right:b.right};}));
+  pass('landscape fare choices stay on screen', boxes.every(b=>b.top>=0&&b.bottom<=390&&b.left>=0&&b.right<=844));
+  const choicesAreClickable = () => [...document.querySelectorAll('[data-fare-action]')].every(e => { const b=e.getBoundingClientRect();return document.elementFromPoint(b.x+b.width/2,b.y+b.height/2)?.closest('[data-fare-action]')===e; });
+  pass('landscape fare choices are not covered by another panel', await page.evaluate(choicesAreClickable));
+  await page.setViewportSize({ width: 320, height: 568 });
+  await page.screenshot({ animations:'disabled', path:resolve(artifacts,'audit-small-mobile.png') });
+  pass('small mobile pedals remain on screen', await page.locator('[data-touch="throttle"]').evaluate(e=>{const b=e.getBoundingClientRect();return b.top>=0&&b.bottom<=innerHeight&&b.right<=innerWidth;}));
+  pass('small mobile fare choices are not covered by another panel', await page.evaluate(choicesAreClickable));
+  pass('small mobile map control remains accessible', await page.locator('#minimapButton').evaluate(e=>{const b=e.getBoundingClientRect();return b.width>0&&b.height>0&&document.elementFromPoint(b.x+b.width/2,b.y+b.height/2)?.closest('#minimapButton')===e;}));
+  pass('no browser runtime errors', report.issues.length===0);
+  report.finishedAt = new Date().toISOString();
+} finally { await writeFile(resolve(artifacts,'audit-qa.json'),JSON.stringify(report,null,2)); await browser.close(); }

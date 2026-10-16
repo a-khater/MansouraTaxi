@@ -62,6 +62,7 @@ function getBox(item) {
 
 function circlePolygonContact(x, z, radius, polygon, holes = []) {
   let inside = false, bestDistance = Infinity, nearX = 0, nearZ = 0;
+  let nearRing = polygon, nearRingIndex = 0, nearDx = 1, nearDz = 0;
   for (const [ringIndex, ring] of [polygon, ...holes].entries()) {
     let ringInside = false;
     for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
@@ -69,7 +70,7 @@ function circlePolygonContact(x, z, radius, polygon, holes = []) {
       if ((a.z > z) !== (b.z > z) && x < (b.x - a.x) * (z - a.z) / (b.z - a.z) + a.x) ringInside = !ringInside;
       const t = clamp(((x - a.x) * dx + (z - a.z) * dz) / (dx * dx + dz * dz || 1), 0, 1);
       const px = a.x + dx * t, pz = a.z + dz * t, distance = Math.hypot(x - px, z - pz);
-      if (distance < bestDistance) { bestDistance = distance; nearX = px; nearZ = pz; }
+      if (distance < bestDistance) { bestDistance = distance; nearX = px; nearZ = pz; nearRing = ring; nearRingIndex = ringIndex; nearDx = dx; nearDz = dz; }
     }
     if (ringIndex === 0) inside = ringInside;
     else if (ringInside) inside = false;
@@ -80,8 +81,10 @@ function circlePolygonContact(x, z, radius, polygon, holes = []) {
   const length = Math.hypot(nx, nz);
   if (length > .00001) { nx /= length; nz /= length; }
   else {
-    // Keep the correction finite when a sampled center lands exactly on an edge.
-    nx = 1; nz = 0;
+    // Edge-center contacts still need the real outward normal, including hole walls.
+    const area = nearRing.reduce((sum, a, i) => { const b = nearRing[(i + 1) % nearRing.length]; return sum + a.x * b.z - b.x * a.z; }, 0);
+    const direction = (area >= 0 ? 1 : -1) * (nearRingIndex ? -1 : 1), edgeLength = Math.hypot(nearDx, nearDz) || 1;
+    nx = nearDz / edgeLength * direction; nz = -nearDx / edgeLength * direction;
   }
   return { x: nx, z: nz, depth: inside ? radius + bestDistance : radius - bestDistance };
 }
@@ -140,7 +143,7 @@ export function createDriving(taxi, colliders = [], bounds = {}) {
           state.speed = approach(state.speed, 0, 25 * step);
         } else if (throttle > 0) {
           if (state.speed < -.25) state.speed = approach(state.speed, 0, 19 * step);
-          else state.speed = Math.min(topSpeed, state.speed + acceleration * throttle * (1 - Math.pow(Math.max(0, state.speed) / (topSpeed + 3), 2)) * step);
+          else if (state.speed <= topSpeed) state.speed = Math.min(topSpeed, state.speed + acceleration * throttle * (1 - Math.pow(Math.max(0, state.speed) / (topSpeed + 3), 2)) * step);
         } else if (throttle < 0) {
           if (state.speed > .25) state.speed = approach(state.speed, 0, 19 * Math.abs(throttle) * step);
           else state.speed = Math.max(-12, state.speed + 7.8 * throttle * step);
@@ -303,7 +306,7 @@ function makeNetworkTraffic(scene, roads) {
   }
   function place(car, edge, distance) {
     car.edge = edge; car.routeDistance = distance; const p = pose(edge, distance);
-    car.x = p.x; car.z = p.z; car.heading = Math.atan2(-edge.dx, -edge.dz); car.speed = 0;
+    car.x = p.x; car.z = p.z; car.heading = Math.atan2(-edge.dx, -edge.dz); car.speed = 0; car.exitPending = false; car.stoppedFor = 0;
     car.group.position.set(car.x, 0, car.z); car.group.rotation.y = car.heading;
   }
   const totalLength = edges.reduce((sum, e) => sum + e.length, 0);
@@ -311,6 +314,18 @@ function makeNetworkTraffic(scene, roads) {
     let pick = random() * totalLength;
     for (const edge of edges) { pick -= edge.length; if (pick <= 0) return edge; }
     return edges.at(-1);
+  }
+  function respawn(car, px, pz, hasPlayer) {
+    for (let attempt = 0; attempt < 120; attempt++) {
+      const edge = edges[Math.floor(random() * edges.length)], distance = random() * edge.length;
+      const point = pose(edge, distance), heading = Math.atan2(-edge.dx, -edge.dz);
+      const playerDistance = hasPlayer ? Math.hypot(point.x - px, point.z - pz) : Infinity;
+      if (hasPlayer && (playerDistance < 210 || playerDistance > 550)) continue;
+      const candidate = { ...point, heading, width: car.width, length: car.length };
+      if (cars.some(other => other !== car && other.active && Math.abs(other.x - point.x) < 10 && Math.abs(other.z - point.z) < 10 && vehiclesOverlap(candidate, other, 1.8))) continue;
+      place(car, edge, distance); return true;
+    }
+    return false;
   }
   for (let i = 0; i < count; i++) {
     const car = makeCityCar(scene, palette[i % palette.length], i % 11 === 0);
@@ -331,15 +346,10 @@ function makeNetworkTraffic(scene, roads) {
       for (const car of cars) {
         if (!car.active) continue;
         // Keep the useful traffic population around the driver without spawning in view.
-        if (hasPlayer && Math.hypot(car.x - px, car.z - pz) > 700 && recycled < 2) {
-          let edge = null;
-          for (let attempt = 0; attempt < 90; attempt++) {
-            const candidate = edges[Math.floor(random() * edges.length)];
-            const distance = Math.hypot((candidate.a.x + candidate.b.x) / 2 - px, (candidate.a.z + candidate.b.z) / 2 - pz);
-            if (distance > 210 && distance < 550) { edge = candidate; break; }
-          }
-          if (edge) { place(car, edge, random() * edge.length); recycled++; }
-        }
+        const playerDistance = hasPlayer ? Math.hypot(car.x - px, car.z - pz) : Infinity;
+        const canLeaveView = !hasPlayer || playerDistance > 160;
+        if (recycled < 2 && ((hasPlayer && playerDistance > 700) || ((car.exitPending || car.stoppedFor > 22) && canLeaveView)) && respawn(car, px, pz, hasPlayer)) recycled++;
+        if (car.exitPending) { car.speed = 0; continue; }
         const edge = car.edge, forwardX = -Math.sin(car.heading), forwardZ = -Math.cos(car.heading);
         let target = Math.min(car.cruise, ['service', 'living_street'].includes(edge.segment.highway) ? 7 : 14);
         if (hasPlayer) {
@@ -351,17 +361,20 @@ function makeNetworkTraffic(scene, roads) {
           const dx = other.x - car.x, dz = other.z - car.z;
           if (Math.abs(dx) > 28 || Math.abs(dz) > 28) continue;
           const along = dx * forwardX + dz * forwardZ, across = Math.abs(dx * -forwardZ + dz * forwardX);
-          if (along > .1 && along < 25 && across < (car.width + other.width) * .45) target = Math.min(target, Math.max(0, (along - (car.length + other.length) / 2 - 1.6) * .8));
+          const sameFlow = Math.cos(other.heading - car.heading) > .7;
+          // Crossing drivers have one stable priority; reciprocal yielding freezes junctions.
+          if ((sameFlow || other.index < car.index) && along > .1 && along < 25 && across < (car.width + other.width) * .45) target = Math.min(target, Math.max(0, (along - (car.length + other.length) / 2 - 1.6) * .8));
         }
         const nextOptions = outgoing.get(edge.to) || [];
         if (nextOptions.length > 2 && edge.length - car.routeDistance < 18) target = Math.min(target, 7.5);
         car.speed = approach(car.speed, target, (target < car.speed ? 13 : 2.8) * dt);
+        car.stoppedFor = car.speed < .15 ? car.stoppedFor + dt : 0;
         car.routeDistance += car.speed * dt;
         let transitions = 0;
         while (car.routeDistance > car.edge.length && transitions++ < 12) {
           car.routeDistance -= car.edge.length;
           const next = chooseEdge(car.edge);
-          if (!next) { car.routeDistance = car.edge.length; car.speed = 0; break; }
+          if (!next) { car.routeDistance = car.edge.length; car.speed = 0; car.exitPending = true; break; }
           car.edge = next;
         }
         const targetPose = pose(car.edge, car.routeDistance), previousX = car.x, previousZ = car.z;
