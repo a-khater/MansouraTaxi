@@ -1,4 +1,6 @@
 import * as THREE from './vendor/three.module.js';
+import { buildVernaTaxi } from './assets/verna-model.js';
+import { batchStaticMeshes } from './assets/geometry-batching.js';
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const approach = (value, target, amount) => value < target ? Math.min(value + amount, target) : Math.max(value - amount, target);
@@ -17,182 +19,71 @@ function box(parent, material, width, height, depth, x = 0, y = 0, z = 0) {
   return mesh(new THREE.BoxGeometry(width, height, depth), material, parent, x, y, z);
 }
 
-function quad(parent, material, vertices) {
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices.flat(), 3));
-  geometry.setIndex([0, 1, 2, 0, 2, 3]);
-  geometry.computeVertexNormals();
-  return mesh(geometry, material, parent);
-}
+/** Egyptian Hyundai Verna LC sedan; its forward direction is local -Z. */
+export const createTaxi = buildVernaTaxi;
 
-function canvasTexture(width, height, draw) {
-  if (typeof document === 'undefined') return null;
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext('2d');
-  draw(ctx, width, height);
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  texture.anisotropy = 4;
-  return texture;
-}
-
-function label(parent, texture, w, h, x, y, z, rotation = 0) {
-  const material = new THREE.MeshStandardMaterial({ map: texture, color: 0xffffff, roughness: 0.7, side: THREE.DoubleSide });
-  const item = mesh(new THREE.PlaneGeometry(w, h), material, parent, x, y, z);
-  item.rotation.y = rotation;
-  return item;
-}
-
-/** Classic Egyptian sedan. Its forward direction is local -Z. */
-export function createTaxi(scene) {
-  const group = new THREE.Group();
-  group.name = 'Mansoura Taxi';
-  const chassis = new THREE.Group();
-  group.add(chassis);
-  scene.add(group);
-
-  const paint = new THREE.MeshStandardMaterial({ color: 0x853f42, roughness: 0.32, metalness: 0.34 });
-  const cream = new THREE.MeshStandardMaterial({ color: 0xe8dcc3, roughness: 0.38, metalness: 0.22 });
-  const dark = new THREE.MeshStandardMaterial({ color: 0x161c23, roughness: 0.43, metalness: 0.25 });
-  const rubber = new THREE.MeshStandardMaterial({ color: 0x101419, roughness: 0.93 });
-  const chrome = new THREE.MeshStandardMaterial({ color: 0xb9c5c8, roughness: 0.23, metalness: 0.83 });
-  const glass = new THREE.MeshStandardMaterial({ color: 0x193d4b, roughness: 0.14, metalness: 0.44, side: THREE.DoubleSide });
-  const headlight = new THREE.MeshStandardMaterial({ color: 0xf5ecd0, emissive: 0xffedbd, emissiveIntensity: 0.28, roughness: 0.2 });
-  const taillight = new THREE.MeshStandardMaterial({ color: 0xab2223, emissive: 0xe52a1f, emissiveIntensity: 0.5 });
-  const orange = new THREE.MeshStandardMaterial({ color: 0xf49b22, emissive: 0xeb7d13, emissiveIntensity: 0.15 });
-
-  // Mansoura's burgundy-and-cream livery on squared Peugeot-era proportions.
-  box(chassis, dark, 1.83, 0.25, 4.35, 0, 0.40, 0);
-  box(chassis, paint, 2.04, 0.43, 4.44, 0, 0.74, 0);
-  box(chassis, cream, 2.055, 0.15, 4.32, 0, 0.91, 0);
-  box(chassis, cream, 2.04, 0.12, 1.05, 0, 1.005, -1.65);
-  box(chassis, cream, 2.04, 0.12, 0.79, 0, 1.005, 1.78);
-  box(chassis, cream, 1.92, 0.045, 1.04, 0, 1.073, -1.65);
-
-  // Sloping windscreen, rear window, and separate side window panes.
-  quad(chassis, glass, [[-.88, 1.01, -1.12], [.88, 1.01, -1.12], [.76, 1.65, -.57], [-.76, 1.65, -.57]]);
-  quad(chassis, glass, [[.88, 1.01, 1.39], [-.88, 1.01, 1.39], [-.76, 1.65, .78], [.76, 1.65, .78]]);
-  for (const side of [-1, 1]) {
-    const xx = side * .895;
-    quad(chassis, glass, [[xx, 1.04, -1.02], [xx, 1.04, -.04], [side * .78, 1.61, -.04], [side * .78, 1.61, -.55]]);
-    quad(chassis, glass, [[xx, 1.04, .035], [xx, 1.04, 1.30], [side * .78, 1.61, .76], [side * .78, 1.61, .035]]);
-    box(chassis, cream, .075, .64, .09, side * .84, 1.33, -.005);
-    box(chassis, chrome, .035, .04, 2.43, side * 1.033, .98, .11);
-    box(chassis, chrome, .035, .055, .25, side * 1.043, .87, .53);
-    box(chassis, chrome, .035, .055, .25, side * 1.043, .87, -.45);
-    const mirror = box(chassis, dark, .24, .14, .31, side * 1.12, 1.09, -.88);
-    mirror.rotation.y = side * .15;
-    box(chassis, chrome, .035, .10, .22, side * 1.245, 1.095, -.88);
-    // Small sill and door seam details read clearly in the chase camera.
-    box(chassis, chrome, .035, .055, 3.35, side * 1.035, .48, .04);
-    box(chassis, dark, .018, .34, .018, side * 1.03, .69, .09);
-  }
-  box(chassis, cream, 1.64, .105, 1.53, 0, 1.685, .10);
-  for (const side of [-1, 1]) {
-    const aPillar = box(chassis, cream, .085, .88, .085, side * .827, 1.33, -.84);
-    aPillar.rotation.x = -.71;
-    const cPillar = box(chassis, cream, .12, .88, .10, side * .827, 1.33, 1.08);
-    cPillar.rotation.x = .76;
-  }
-
-  box(chassis, chrome, 2.13, .12, .19, 0, .58, -2.25);
-  box(chassis, chrome, 2.13, .12, .19, 0, .58, 2.25);
-  box(chassis, dark, .83, .24, .035, 0, .83, -2.231);
-  for (let i = -3; i <= 3; i++) box(chassis, chrome, .025, .18, .04, i * .11, .83, -2.255);
-  for (const side of [-1, 1]) {
-    for (const offset of [-.11, .11]) mesh(new THREE.CylinderGeometry(.115, .115, .04, 18), headlight, chassis, side * .70 + offset, .84, -2.245).rotation.x = Math.PI / 2;
-    box(chassis, orange, .19, .10, .035, side * .92, .66, -2.248);
-    box(chassis, taillight, .43, .20, .045, side * .72, .84, 2.239);
-    box(chassis, orange, .10, .20, .05, side * .94, .84, 2.24);
-  }
-  box(chassis, chrome, .12, .075, .30, -.64, .34, 2.25);
-
-  const wheels = [];
-  for (const side of [-1, 1]) {
-    for (const z of [-1.43, 1.43]) {
-      const pivot = new THREE.Group();
-      pivot.position.set(side * 1.015, .43, z);
-      chassis.add(pivot);
-      const wheel = new THREE.Group();
-      pivot.add(wheel);
-      mesh(new THREE.CylinderGeometry(.43, .43, .29, 20), rubber, wheel).rotation.z = Math.PI / 2;
-      mesh(new THREE.CylinderGeometry(.275, .275, .303, 16), chrome, wheel).rotation.z = Math.PI / 2;
-      mesh(new THREE.CylinderGeometry(.17, .17, .31, 16), dark, wheel).rotation.z = Math.PI / 2;
-      mesh(new THREE.CylinderGeometry(.085, .085, .325, 12), chrome, wheel).rotation.z = Math.PI / 2;
-      wheels.push({ pivot, wheel, front: z < 0 });
-      // Squared black wheel arches frame the tire without hiding its motion.
-      box(chassis, dark, .075, .07, 1.0, side * 1.045, .91, z);
-    }
-  }
-
-  const taxiTexture = canvasTexture(256, 96, (ctx, w, h) => {
-    ctx.fillStyle = '#ffe5a2'; ctx.fillRect(0, 0, w, h);
-    ctx.fillStyle = '#121b23'; ctx.font = '900 66px Arial'; ctx.textAlign = 'center'; ctx.fillText('TAXI', w / 2, 70);
-  });
-  const signMaterial = new THREE.MeshStandardMaterial({ color: 0xffd571, emissive: 0xffc85a, emissiveIntensity: .3 });
-  box(chassis, dark, .68, .045, .28, 0, 1.765, -.04);
-  box(chassis, signMaterial, .67, .28, .24, 0, 1.91, -.04);
-  label(chassis, taxiTexture, .61, .22, 0, 1.91, -.166, Math.PI);
-  label(chassis, taxiTexture, .61, .22, 0, 1.91, .086);
-
-  const plateTexture = canvasTexture(384, 128, (ctx, w, h) => {
-    ctx.fillStyle = '#f1f1e9'; ctx.fillRect(0, 0, w, h);
-    ctx.fillStyle = '#3487c6'; ctx.fillRect(0, 0, w, 34);
-    ctx.fillStyle = '#fff'; ctx.font = 'bold 24px Arial'; ctx.textAlign = 'center'; ctx.fillText('EGYPT    مصر', w / 2, 26);
-    ctx.fillStyle = '#172330'; ctx.font = 'bold 59px Arial'; ctx.fillText('د ق هـ  ٢٧٤١', w / 2, 100);
-    ctx.strokeStyle = '#a6aaa4'; ctx.lineWidth = 6; ctx.strokeRect(2, 2, w - 4, h - 4);
-  });
-  label(chassis, plateTexture, .64, .22, 0, .57, -2.355, Math.PI);
-  label(chassis, plateTexture, .64, .22, 0, .68, 2.354);
-  const emblem = canvasTexture(256, 256, (ctx, w, h) => {
-    ctx.fillStyle = '#e8dcc3'; ctx.fillRect(0, 0, w, h);
-    ctx.strokeStyle = '#853f42'; ctx.lineWidth = 8; ctx.beginPath(); ctx.arc(w / 2, h / 2, 112, 0, Math.PI * 2); ctx.stroke();
-    ctx.fillStyle = '#853f42'; ctx.textAlign = 'center'; ctx.font = 'bold 48px Arial'; ctx.fillText('المنصورة', w / 2, 107); ctx.font = '900 45px Arial'; ctx.fillText('TAXI', w / 2, 166);
-  });
-  label(chassis, emblem, .43, .43, -1.044, .70, -.54, -Math.PI / 2);
-  label(chassis, emblem, .43, .43, 1.044, .70, -.54, Math.PI / 2);
-
-  const lights = [];
-  for (const side of [-1, 1]) {
-    const light = new THREE.SpotLight(0xffedc2, 0, 57, Math.PI / 7, .65, 1.4);
-    light.position.set(side * .73, .9, -2.1);
-    light.target.position.set(side * 2, .15, -30);
-    group.add(light, light.target);
-    lights.push(light);
-  }
-  let wheelAngle = 0;
-  return {
-    group,
-    wheels,
-    setColor(color) { paint.color.set(color); },
-    setNight(night) {
-      headlight.emissiveIntensity = night ? 2.6 : .28;
-      signMaterial.emissiveIntensity = night ? .9 : .3;
-      for (const light of lights) light.intensity = night ? 20 : 0;
-    },
-    updateVisual(dt, speed, steer) {
-      wheelAngle -= speed * dt / .43;
-      for (const item of wheels) {
-        item.wheel.rotation.x = wheelAngle;
-        if (item.front) item.pivot.rotation.y = damp(item.pivot.rotation.y, steer * .44, 12, dt);
-      }
-      chassis.rotation.z = damp(chassis.rotation.z, -steer * clamp(speed / 40, -.8, .8) * .045, 6, dt);
-    },
+/** Oriented body footprints: neighboring narrow lanes can pass without false hits. */
+export function vehiclesOverlap(first, second, padding = .06) {
+  const footprint = vehicle => {
+    const state = vehicle?.state || vehicle;
+    const x = state?.x ?? vehicle?.group?.position?.x ?? vehicle?.position?.x;
+    const z = state?.z ?? vehicle?.group?.position?.z ?? vehicle?.position?.z;
+    const heading = state?.heading ?? vehicle?.group?.rotation?.y ?? vehicle?.rotation?.y ?? 0;
+    if (!Number.isFinite(x) || !Number.isFinite(z) || !Number.isFinite(heading)) return null;
+    return { x, z, width: (vehicle.width ?? vehicle.dimensions?.width ?? state.width ?? 1.68) / 2,
+      length: (vehicle.length ?? vehicle.dimensions?.length ?? state.length ?? 4.26) / 2,
+      right: { x: Math.cos(heading), z: -Math.sin(heading) }, forward: { x: -Math.sin(heading), z: -Math.cos(heading) } };
   };
+  const a = footprint(first), b = footprint(second);
+  if (!a || !b) return false;
+  const dot = (u, v) => u.x * v.x + u.z * v.z, delta = { x: b.x - a.x, z: b.z - a.z };
+  for (const axis of [a.right, a.forward, b.right, b.forward]) {
+    const extentA = a.width * Math.abs(dot(axis, a.right)) + a.length * Math.abs(dot(axis, a.forward));
+    const extentB = b.width * Math.abs(dot(axis, b.right)) + b.length * Math.abs(dot(axis, b.forward));
+    if (Math.abs(dot(delta, axis)) >= extentA + extentB + padding) return false;
+  }
+  return true;
 }
 
 function getBox(item) {
   if (!item || item.disabled) return null;
   if (item.min && item.max) return { minX: item.min.x, maxX: item.max.x, minZ: item.min.z, maxZ: item.max.z };
   if (Number.isFinite(item.minX)) return item;
+  if (item.polygon?.length) {
+    return { minX: Math.min(...item.polygon.map(p => p.x)), maxX: Math.max(...item.polygon.map(p => p.x)), minZ: Math.min(...item.polygon.map(p => p.z)), maxZ: Math.max(...item.polygon.map(p => p.z)) };
+  }
   if (Number.isFinite(item.x) && Number.isFinite(item.z)) {
     const width = item.w ?? item.width ?? 2;
     const depth = item.d ?? item.depth ?? item.length ?? 2;
     return { minX: item.x - width / 2, maxX: item.x + width / 2, minZ: item.z - depth / 2, maxZ: item.z + depth / 2 };
   }
   return null;
+}
+
+function circlePolygonContact(x, z, radius, polygon, holes = []) {
+  let inside = false, bestDistance = Infinity, nearX = 0, nearZ = 0;
+  for (const [ringIndex, ring] of [polygon, ...holes].entries()) {
+    let ringInside = false;
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      const a = ring[j], b = ring[i], dx = b.x - a.x, dz = b.z - a.z;
+      if ((a.z > z) !== (b.z > z) && x < (b.x - a.x) * (z - a.z) / (b.z - a.z) + a.x) ringInside = !ringInside;
+      const t = clamp(((x - a.x) * dx + (z - a.z) * dz) / (dx * dx + dz * dz || 1), 0, 1);
+      const px = a.x + dx * t, pz = a.z + dz * t, distance = Math.hypot(x - px, z - pz);
+      if (distance < bestDistance) { bestDistance = distance; nearX = px; nearZ = pz; }
+    }
+    if (ringIndex === 0) inside = ringInside;
+    else if (ringInside) inside = false;
+  }
+  if (!inside && bestDistance >= radius) return null;
+  let nx = x - nearX, nz = z - nearZ;
+  if (inside) { nx *= -1; nz *= -1; }
+  const length = Math.hypot(nx, nz);
+  if (length > .00001) { nx /= length; nz /= length; }
+  else {
+    // Keep the correction finite when a sampled center lands exactly on an edge.
+    nx = 1; nz = 0;
+  }
+  return { x: nx, z: nz, depth: inside ? radius + bestDistance : radius - bestDistance };
 }
 
 /** Deterministic driving with substepped collision handling and signed reverse speed. */
@@ -206,6 +97,9 @@ export function createDriving(taxi, colliders = [], bounds = {}) {
     maxZ: bounds.maxZ ?? bounds.max?.z ?? 650,
   };
   let impactCooldown = 0;
+  const collisionBounds = new WeakMap();
+  const halfWidth = taxi.dimensions ? taxi.dimensions.width / 2 - .025 : .96;
+  const halfLength = taxi.dimensions ? taxi.dimensions.length / 2 - .035 : 1.98;
 
   function hit(impact) {
     if (impactCooldown <= 0 && impact > 2.2) {
@@ -255,19 +149,33 @@ export function createDriving(taxi, colliders = [], bounds = {}) {
         }
         if (!state.boosting && state.speed > 40) state.speed = approach(state.speed, 40, 6 * step);
         const grip = braking ? 1.7 : 1;
-        const turn = state.steer * (state.speed / 2.82) * Math.tan(.43) / (1 + Math.abs(state.speed) * .078) * grip;
+        const turn = state.steer * (state.speed / (taxi.dimensions?.wheelbase || 2.82)) * Math.tan(.43) / (1 + Math.abs(state.speed) * .078) * grip;
         state.heading += turn * step;
         state.heading = Math.atan2(Math.sin(state.heading), Math.cos(state.heading));
         state.x -= Math.sin(state.heading) * state.speed * step;
         state.z -= Math.cos(state.heading) * state.speed * step;
 
         // Oriented footprint reduced to world extents; sliding along facades feels natural.
-        const extentX = Math.abs(Math.cos(state.heading)) * .96 + Math.abs(Math.sin(state.heading)) * 1.98;
-        const extentZ = Math.abs(Math.sin(state.heading)) * .96 + Math.abs(Math.cos(state.heading)) * 1.98;
+        const extentX = Math.abs(Math.cos(state.heading)) * halfWidth + Math.abs(Math.sin(state.heading)) * halfLength;
+        const extentZ = Math.abs(Math.sin(state.heading)) * halfWidth + Math.abs(Math.cos(state.heading)) * halfLength;
         let collided = false;
         for (const item of colliders) {
-          const b = getBox(item);
+          if (!item || item.disabled) continue;
+          let b = collisionBounds.get(item);
+          if (!b) { b = getBox(item); if (b) collisionBounds.set(item, b); }
           if (!b || state.x + extentX <= b.minX || state.x - extentX >= b.maxX || state.z + extentZ <= b.minZ || state.z - extentZ >= b.maxZ) continue;
+          if (item.polygon?.length >= 3) {
+            let contact = null;
+            for (const offset of [-halfLength + halfWidth, 0, halfLength - halfWidth]) {
+              const cx = state.x - Math.sin(state.heading) * offset, cz = state.z - Math.cos(state.heading) * offset;
+              const test = circlePolygonContact(cx, cz, halfWidth, item.polygon, item.holes);
+              if (test && (!contact || test.depth > contact.depth)) contact = test;
+            }
+            if (contact) {
+              state.x += contact.x * (contact.depth + .025); state.z += contact.z * (contact.depth + .025); collided = true;
+            }
+            continue;
+          }
           const depths = [state.x + extentX - b.minX, b.maxX - state.x + extentX, state.z + extentZ - b.minZ, b.maxZ - state.z + extentZ];
           const smallest = Math.min(...depths);
           const edge = depths.indexOf(smallest);
@@ -302,16 +210,23 @@ export function createDriving(taxi, colliders = [], bounds = {}) {
   };
 }
 
+const trafficTemplates = new Map();
 function makeCityCar(scene, color, microbus = false) {
   const group = new THREE.Group();
+  const templateKey = `${microbus ? 'bus' : 'sedan'}:${color}`;
+  if (trafficTemplates.has(templateKey)) {
+    const template = trafficTemplates.get(templateKey);
+    for (const item of template.meshes) { const m = new THREE.Mesh(item.geometry, item.material); m.castShadow = true; m.receiveShadow = true; group.add(m); }
+    scene.add(group); return { group, width: template.width, length: template.length };
+  }
   const paint = new THREE.MeshStandardMaterial({ color, roughness: .43, metalness: .25 });
   const glass = new THREE.MeshStandardMaterial({ color: 0x203c48, roughness: .18, metalness: .35 });
   const black = new THREE.MeshStandardMaterial({ color: 0x131a20, roughness: .8 });
   const metal = new THREE.MeshStandardMaterial({ color: 0x8e9c9e, roughness: .3, metalness: .7 });
   const head = new THREE.MeshStandardMaterial({ color: 0xfbe7aa, emissive: 0xfbe7aa, emissiveIntensity: .7 });
   const tail = new THREE.MeshStandardMaterial({ color: 0xc72b24, emissive: 0xc72b24, emissiveIntensity: .4 });
-  const length = microbus ? 5.9 : 4.3;
-  const width = microbus ? 2.25 : 1.95;
+  const length = microbus ? 5.9 : 4.26;
+  const width = microbus ? 2.05 : 1.70;
   box(group, paint, width, microbus ? 1.05 : .62, length, 0, microbus ? .97 : .75, 0);
   if (microbus) {
     box(group, paint, 2.15, .25, 5.65, 0, 2.05, .05);
@@ -336,12 +251,135 @@ function makeCityCar(scene, color, microbus = false) {
   }
   box(group, black, width + .08, .13, .14, 0, .51, -length / 2);
   box(group, black, width + .08, .13, .14, 0, .51, length / 2);
+  batchStaticMeshes(group);
+  trafficTemplates.set(templateKey, { width, length, meshes: group.children.map(m => ({ geometry: m.geometry, material: m.material })) });
   scene.add(group);
   return { group, width, length };
 }
 
+function makeNetworkTraffic(scene, roads) {
+  const edges = [], outgoing = new Map();
+  const excluded = new Set(['footway', 'path', 'pedestrian', 'steps', 'cycleway', 'bridleway', 'construction', 'proposed', 'platform']);
+  const nodeKey = p => p.nodeId != null ? String(p.nodeId) : `${p.x.toFixed(2)},${p.z.toFixed(2)}`;
+  let seed = 21274;
+  const random = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
+  const add = (a, b, segment, reverse = false) => {
+    const length = Math.hypot(b.x - a.x, b.z - a.z);
+    if (length < .05) return;
+    const edge = { a, b, from: nodeKey(a), to: nodeKey(b), length, dx: (b.x - a.x) / length, dz: (b.z - a.z) / length, segment, reverse, id: edges.length };
+    const width = segment.width || 6;
+    edge.lane = segment.oneway && width < 5.5 ? 0 : clamp(width * .21, .68, 2.7);
+    edges.push(edge);
+    if (!outgoing.has(edge.from)) outgoing.set(edge.from, []);
+    outgoing.get(edge.from).push(edge);
+  };
+  for (const segment of roads.segments) {
+    if (excluded.has(segment.highway) || !segment.points || segment.points.length < 2) continue;
+    const direction = segment.oneway === '-1' || segment.oneway === -1 ? -1 : [true, 'yes', '1', 1].includes(segment.oneway) || segment.junction === 'roundabout' ? 1 : 0;
+    for (let i = 1; i < segment.points.length; i++) {
+      const a = segment.points[i - 1], b = segment.points[i];
+      if (direction >= 0) add(a, b, segment);
+      if (direction <= 0) add(b, a, segment, true);
+    }
+  }
+  if (!edges.length) return null;
+  const cars = [], palette = [0xc7b8a0, 0xe2e4dd, 0x304d62, 0x993f36, 0x426862, 0x6d7779, 0x9a8061, 0x758b95];
+  const count = Math.min(80, Math.max(24, Math.round(edges.reduce((sum, e) => sum + e.length, 0) / 1400)));
+  let elapsed = 0;
+  function pose(edge, distance) {
+    const t = clamp(distance / edge.length, 0, 1);
+    return { x: THREE.MathUtils.lerp(edge.a.x, edge.b.x, t) - edge.dz * edge.lane, z: THREE.MathUtils.lerp(edge.a.z, edge.b.z, t) + edge.dx * edge.lane };
+  }
+  function chooseEdge(previous) {
+    const all = outgoing.get(previous.to) || [];
+    let choices = all.filter(e => e.to !== previous.from);
+    if (!choices.length) choices = all;
+    if (!choices.length) return null;
+    // A straight continuation has more weight, while every legal turn remains possible.
+    const weights = choices.map(e => 1.5 + (previous.dx * e.dx + previous.dz * e.dz) * 1.1);
+    let pick = random() * weights.reduce((sum, w) => sum + w, 0);
+    for (let i = 0; i < choices.length; i++) { pick -= weights[i]; if (pick <= 0) return choices[i]; }
+    return choices.at(-1);
+  }
+  function place(car, edge, distance) {
+    car.edge = edge; car.routeDistance = distance; const p = pose(edge, distance);
+    car.x = p.x; car.z = p.z; car.heading = Math.atan2(-edge.dx, -edge.dz); car.speed = 0;
+    car.group.position.set(car.x, 0, car.z); car.group.rotation.y = car.heading;
+  }
+  const totalLength = edges.reduce((sum, e) => sum + e.length, 0);
+  function randomEdge() {
+    let pick = random() * totalLength;
+    for (const edge of edges) { pick -= edge.length; if (pick <= 0) return edge; }
+    return edges.at(-1);
+  }
+  for (let i = 0; i < count; i++) {
+    const car = makeCityCar(scene, palette[i % palette.length], i % 11 === 0);
+    Object.assign(car, { index: i, active: true, cruise: 7 + random() * 7, wait: 0 });
+    const edge = randomEdge(); place(car, edge, random() * edge.length); cars.push(car);
+  }
+  return {
+    cars,
+    setDensity(value) {
+      const activeCount = Math.round(count * clamp(Number(value) || 0, 0, 1));
+      for (const car of cars) { car.active = car.index < activeCount; car.group.visible = car.active; }
+    },
+    update(dt, player) {
+      dt = clamp(dt, 0, .1); elapsed += dt;
+      const p = player?.state || player, px = p?.x ?? p?.position?.x, pz = p?.z ?? p?.position?.z;
+      const hasPlayer = Number.isFinite(px) && Number.isFinite(pz);
+      let recycled = 0;
+      for (const car of cars) {
+        if (!car.active) continue;
+        // Keep the useful traffic population around the driver without spawning in view.
+        if (hasPlayer && Math.hypot(car.x - px, car.z - pz) > 700 && recycled < 2) {
+          let edge = null;
+          for (let attempt = 0; attempt < 90; attempt++) {
+            const candidate = edges[Math.floor(random() * edges.length)];
+            const distance = Math.hypot((candidate.a.x + candidate.b.x) / 2 - px, (candidate.a.z + candidate.b.z) / 2 - pz);
+            if (distance > 210 && distance < 550) { edge = candidate; break; }
+          }
+          if (edge) { place(car, edge, random() * edge.length); recycled++; }
+        }
+        const edge = car.edge, forwardX = -Math.sin(car.heading), forwardZ = -Math.cos(car.heading);
+        let target = Math.min(car.cruise, ['service', 'living_street'].includes(edge.segment.highway) ? 7 : 14);
+        if (hasPlayer) {
+          const dx = px - car.x, dz = pz - car.z, along = dx * forwardX + dz * forwardZ, across = Math.abs(dx * -forwardZ + dz * forwardX);
+          if (along > -2 && along < 33 && across < 2.4) target = Math.min(target, Math.max(0, (along - 6) * .7));
+        }
+        for (const other of cars) {
+          if (other === car || !other.active) continue;
+          const dx = other.x - car.x, dz = other.z - car.z;
+          if (Math.abs(dx) > 28 || Math.abs(dz) > 28) continue;
+          const along = dx * forwardX + dz * forwardZ, across = Math.abs(dx * -forwardZ + dz * forwardX);
+          if (along > .1 && along < 25 && across < (car.width + other.width) * .45) target = Math.min(target, Math.max(0, (along - (car.length + other.length) / 2 - 1.6) * .8));
+        }
+        const nextOptions = outgoing.get(edge.to) || [];
+        if (nextOptions.length > 2 && edge.length - car.routeDistance < 18) target = Math.min(target, 7.5);
+        car.speed = approach(car.speed, target, (target < car.speed ? 13 : 2.8) * dt);
+        car.routeDistance += car.speed * dt;
+        let transitions = 0;
+        while (car.routeDistance > car.edge.length && transitions++ < 12) {
+          car.routeDistance -= car.edge.length;
+          const next = chooseEdge(car.edge);
+          if (!next) { car.routeDistance = car.edge.length; car.speed = 0; break; }
+          car.edge = next;
+        }
+        const targetPose = pose(car.edge, car.routeDistance), previousX = car.x, previousZ = car.z;
+        car.x = damp(car.x, targetPose.x, 12, dt); car.z = damp(car.z, targetPose.z, 12, dt);
+        const deltaX = car.x - previousX, deltaZ = car.z - previousZ;
+        if (Math.hypot(deltaX, deltaZ) > .003) {
+          const desired = Math.atan2(-deltaX, -deltaZ), delta = Math.atan2(Math.sin(desired - car.heading), Math.cos(desired - car.heading));
+          car.heading += delta * (1 - Math.exp(-8 * dt));
+        }
+        car.group.position.set(car.x, 0, car.z); car.group.rotation.y = car.heading;
+      }
+    },
+  };
+}
+
 /** Ambient traffic follows the street grid and slows for the player's taxi. */
 export function makeTraffic(scene, roads = {}) {
+  if (roads.segments?.length) { const networkTraffic = makeNetworkTraffic(scene, roads); if (networkTraffic) return networkTraffic; }
   const vertical = Array.isArray(roads.vertical) ? roads.vertical.map(r => typeof r === 'number' ? r : r.x) : [-400, -200, 0, 200];
   const horizontal = Array.isArray(roads.horizontal) ? roads.horizontal.map(r => typeof r === 'number' ? r : r.z) : [-500, -250, 0, 250, 500];
   const cars = [];

@@ -1,0 +1,13 @@
+Geographic data: © OpenStreetMap contributors.
+https://www.openstreetmap.org/copyright
+Database license: Open Database License (ODbL) 1.0.
+https://opendatacommons.org/licenses/odbl/1-0/
+
+mansoura-map.json is a derived OpenStreetMap database with a bounded extract,
+local meter projection, graph connectivity, and explicitly marked inferred road
+widths/building heights. Geographic road coordinates and mapped building
+footprints are retained. Procedural facade decoration is not a surveyed facade.
+Source query, endpoint, retrieval timestamp, projection and data limitations are
+included in the JSON provenance. The original downloaded source is retained at
+data/source/mansoura-osm-source.json and can be regenerated with
+python scripts/acquire_mansoura.py (dependency: scripts/requirements.txt).

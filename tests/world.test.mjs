@@ -1,94 +1,97 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import * as THREE from '../vendor/three.module.js';
-import { createWorld } from '../world.js';
-import { routeTo } from '../navigation.js';
+import {createWorld} from '../world.js';
+import {nearestRoad} from '../navigation.js';
 
-// Signs only need the canvas drawing surface during scene construction.
-// Geometry, materials, routing and collision data use the real vendored THREE.
-globalThis.document = {
-  createElement(tag) {
-    assert.equal(tag, 'canvas');
-    return { getContext: () => ({ fillRect() {}, strokeRect() {}, fillText() {} }) };
-  },
-};
-const scene = new THREE.Scene();
-const world = createWorld(scene);
-const obstructed = (x, z, extentX = 2, extentZ = 2) => world.colliders.some(c =>
-  x + extentX > c.minX && x - extentX < c.maxX &&
-  z + extentZ > c.minZ && z - extentZ < c.maxZ);
+globalThis.document={createElement(tag){assert.equal(tag,'canvas');return{getContext(){return{fillRect(){},strokeRect(){},fillText(){},beginPath(){},moveTo(){},lineTo(){},stroke(){}}}};}};
+const data=JSON.parse(readFileSync(new URL('../assets/mansoura-map.json',import.meta.url),'utf8'));
+const scene=new THREE.Scene(),world=createWorld(scene,data);
+function inside(p,polygon){let hit=false;for(let i=0,j=polygon.length-1;i<polygon.length;j=i++){const a=polygon[i],b=polygon[j];if((a.z>p.z)!==(b.z>p.z)&&p.x<(b.x-a.x)*(p.z-a.z)/(b.z-a.z)+a.x)hit=!hit;}return hit;}
+const blocked=(p,type)=>world.colliders.some(c=>(!type||c.type===type)&&p.x>=c.minX&&p.x<=c.maxX&&p.z>=c.minZ&&p.z<=c.maxZ&&inside(p,c.polygon)&&!(c.holes||[]).some(h=>inside(p,h)));
 
-test('city construction provides finite geometry, unique accessible landmarks and an open start', () => {
-  assert.ok(world.landmarks.length >= 8);
-  assert.equal(new Set(world.landmarks.map(l => l.id)).size, world.landmarks.length);
-  assert.equal(obstructed(world.start.x, world.start.z), false);
-  for (const landmark of world.landmarks) {
-    assert.ok(landmark.name && landmark.arabic);
-    assert.ok(landmark.x > world.bounds.minX && landmark.x < world.bounds.maxX);
-    assert.ok(landmark.z > world.bounds.minZ && landmark.z < world.bounds.maxZ);
-    assert.equal(obstructed(landmark.x, landmark.z), false, `${landmark.name} must fit a taxi`);
+test('world preserves source street/footprint geometry and distinguishes inferred detail',()=>{
+  assert.equal(world.roads,data.roads);assert.equal(world.bounds,data.bounds);assert.equal(world.start,data.start);
+  assert.ok(data.buildings.length>2000&&data.inferredBuildings.length>0);
+  assert.equal(world.colliders.filter(c=>c.type==='building'&&!c.inferred).length,data.buildings.length);
+  for(const building of data.buildings.slice(0,50)){
+    const collider=world.colliders.find(c=>c.sourceId===building.id);
+    assert.equal(collider.height,building.height);assert.ok(building.heightSource&&building.accuracy.footprint);
+    const expected=building.points.map(p=>`${p.x},${p.z}`).sort();
+    assert.deepEqual(collider.polygon.map(p=>`${p.x},${p.z}`).sort(),expected,'collider retains the actual footprint');
   }
-  scene.traverse(object => {
-    if (!object.isMesh) return;
-    assert.ok(object.geometry.attributes.position.count > 0);
-    const array = object.isInstancedMesh ? object.instanceMatrix.array : object.geometry.attributes.position.array;
-    assert.ok(array.every(Number.isFinite), `${object.type} contains nonfinite geometry`);
-  });
+  for(const b of data.inferredBuildings)assert.match(b.accuracy.footprint,/inferred/);
+  assert.equal(world.stats.inferredFrontageBuildings,data.inferredBuildings.length);
 });
 
-test('both driving lanes remain clear along every western-bank street', () => {
-  for (const x of world.roads.vertical) for (let z = -640; z <= 640; z += 2) {
-    for (const lane of [-5, 5]) assert.equal(obstructed(x + lane, z, 1, 2), false, `vertical road ${x}, lane ${lane}, z ${z}`);
+test('all curated street pickups and Al Mashaya start are clear of buildings and water',()=>{
+  for(const p of [world.start,...world.landmarks]){
+    assert.equal(blocked(p),false,p.id||'start');assert.ok(nearestRoad(p,world.roads).distance<.02);
   }
-  for (const z of world.roads.horizontal) for (let x = -570; x <= 210; x += 2) {
-    for (const lane of [-5, 5]) assert.equal(obstructed(x, z + lane, 2, 1), false, `horizontal road ${z}, lane ${lane}, x ${x}`);
-  }
+  assert.equal(world.groundHeight,.14);assert.equal(world.heightAt(world.start.x,world.start.z),.14);
+  assert.ok(world.getDistrict(world.start.x,world.start.z).name);
 });
 
-test('Nile blocks vehicles outside the accessible bridge corridor', () => {
-  for (let x = 260; x <= 580; x += 4) {
-    for (const z of [-600, -550, -450, -250, 0, 250, 500, 600]) assert.equal(obstructed(x, z), true);
-    assert.equal(obstructed(x, -500), false, `bridge is blocked at x ${x}`);
+test('water collision follows the mapped river and leaves actual bridges open',()=>{
+  let waterSamples=0,bridgeSamples=0;
+  for(let x=data.bounds.minX+100;x<data.bounds.maxX;x+=180)for(let z=data.bounds.minZ+100;z<data.bounds.maxZ;z+=180){
+    const p={x,z};if(!data.water.some(w=>inside(p,w.points)))continue;
+    if(nearestRoad(p,{segments:data.roads.segments.filter(s=>s.bridge)}).distance<25)continue;
+    assert.equal(blocked(p,'water'),true);waterSamples++;
   }
+  for(const s of data.roads.segments.filter(s=>s.bridge))for(const p of s.points){assert.equal(blocked(p,'water'),false,`bridge ${s.id}`);bridgeSamples++;}
+  assert.ok(waterSamples>10&&bridgeSamples>20);
 });
 
-test('all landmark-to-landmark routes remain on streets with room for the taxi', () => {
-  for (const from of world.landmarks) for (const to of world.landmarks) {
-    if (from.id === to.id) continue;
-    const route = routeTo(from, to, world.roads);
-    assert.ok(route.length > 0 && Number.isFinite(route.length));
-    for (let i = 1; i < route.points.length; i++) {
-      const a = route.points[i - 1], b = route.points[i];
-      const samples = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 4));
-      for (let j = 0; j <= samples; j++) {
-        const t = j / samples;
-        assert.equal(obstructed(a.x + (b.x - a.x) * t, a.z + (b.z - a.z) * t), false, `${from.id} → ${to.id} route crosses an obstruction`);
-      }
-    }
+test('land has a geometric river cutout and cannot occlude the lower Nile surface',()=>{
+  const terrain=world.root.children.find(o=>o.userData.waterCutouts);assert.ok(terrain);
+  scene.updateMatrixWorld(true);let samples=0;
+  for(let x=data.bounds.minX+120;x<data.bounds.maxX;x+=250)for(let z=data.bounds.minZ+120;z<data.bounds.maxZ;z+=250){
+    const p={x,z};if(!data.water.some(w=>inside(p,w.points)&&!(w.holes||[]).some(h=>inside(p,h))))continue;
+    const ray=new THREE.Raycaster(new THREE.Vector3(x,10,z),new THREE.Vector3(0,-1,0));
+    assert.equal(ray.intersectObject(terrain).length,0,'mapped Nile is not covered by ground');samples++;
   }
+  assert.ok(samples>5);
+  const land=new THREE.Raycaster(new THREE.Vector3(0,10,800),new THREE.Vector3(0,-1,0));
+  assert.ok(land.intersectObject(terrain).length,'land stays at its original elevation outside the river');
 });
 
-test('cinematic camera has an unobstructed corridor to the starting taxi', () => {
-  for (let i = 0; i <= 40; i++) {
-    const t = i / 40;
-    assert.equal(obstructed(213 + (world.start.x - 213) * t, 172 + (world.start.z - 172) * t, .25, .25), false);
+test('all rendered static ground surfaces leave the river visible, including broad landuse polygons',()=>{
+  const groundMeshes=[];scene.traverse(o=>{if(o.isMesh&&!o.isInstancedMesh&&(o.userData.waterCutouts||o.material.vertexColors))groundMeshes.push(o);});
+  scene.updateMatrixWorld(true);let checked=0;
+  const bridgeRoads={segments:data.roads.segments.filter(s=>s.bridge)};
+  for(let x=data.bounds.minX+120;x<data.bounds.maxX;x+=180)for(let z=data.bounds.minZ+120;z<data.bounds.maxZ;z+=180){
+    const p={x,z};if(!data.water.some(w=>inside(p,w.points)&&!(w.holes||[]).some(h=>inside(p,h))))continue;
+    if(nearestRoad(p,bridgeRoads).distance<25||nearestRoad(p,data.roads).distance<18)continue;
+    const ray=new THREE.Raycaster(new THREE.Vector3(x,.5,z),new THREE.Vector3(0,-1,0),0,.79);
+    assert.equal(ray.intersectObjects(groundMeshes).length,0,`ground/landuse covers Nile at ${x},${z}`);checked++;
   }
+  assert.ok(checked>10);
 });
 
-test('water animation stays finite and night coloring restores on return to day', () => {
-  let water;
-  scene.traverse(object => { if (object.material?.uniforms?.colorA) water = object; });
-  assert.ok(water);
-  const uniforms = water.material.uniforms;
-  const day = uniforms.colorA.value.clone();
-  const dayFog = uniforms.fogColor.value.clone();
-  world.setNight(true);
-  assert.ok(uniforms.colorA.value.r + uniforms.colorA.value.g + uniforms.colorA.value.b < day.r + day.g + day.b);
-  world.update(1 / 60, 900);
-  assert.equal(uniforms.time.value, 900);
-  world.setNight(false);
-  assert.ok(uniforms.colorA.value.equals(day));
-  assert.ok(uniforms.fogColor.value.equals(dayFog));
-  scene.updateMatrixWorld(true);
-  scene.traverse(object => assert.ok(object.matrixWorld.elements.every(Number.isFinite)));
+test('moving chunk focus changes the rendered district while preserving collision geometry',()=>{
+  const groups=world.root.children.filter(c=>c.userData.center),collisionCount=world.colliders.length;
+  const visible=()=>new Set(groups.filter(g=>g.visible));const first=visible();
+  world.setFocus(data.bounds.maxX-100,data.bounds.maxZ-100);const distant=visible();
+  assert.ok(first.size&&distant.size);assert.ok([...first].some(g=>!distant.has(g)));
+  assert.equal(world.colliders.length,collisionCount);
+  world.setFocus(world.start.x,world.start.z);assert.deepEqual(visible(),first);
+});
+
+test('clockwise source polygons produce visible outward-facing building walls',()=>{
+  const b={id:'building/test',osmId:2,points:[{x:20,z:20},{x:20,z:40},{x:40,z:40},{x:40,z:20}],holes:[],height:20,tags:{}};
+  const fixture={roads:{segments:[{id:'road',osmId:263225726,width:8,highway:'primary',points:[{x:0,z:0,nodeId:1},{x:100,z:0,nodeId:2}]}]},bounds:{minX:-100,maxX:200,minZ:-100,maxZ:200},start:{x:0,z:0,heading:0},buildings:[b],water:[],waterColliders:[],inferredBuildings:[],areas:[],paths:[],landmarks:[],stats:{}};
+  const s=new THREE.Scene();createWorld(s,fixture);s.updateMatrixWorld(true);
+  const ray=new THREE.Raycaster(new THREE.Vector3(5,6,30),new THREE.Vector3(1,0,0),0,30);
+  const hit=ray.intersectObjects(s.children,true).find(h=>Math.abs(h.point.x-20)<.01);
+  assert.ok(hit,'a ray from outside hits the exterior wall between windows');
+  assert.ok(hit.face.normal.x<-.9,'exterior wall normal points outward');
+});
+
+test('scene transforms remain finite and water/night updates restore daylight colors',()=>{
+  let water;scene.traverse(o=>{if(o.material?.uniforms?.deep)water=o;});assert.ok(water);
+  const day=water.material.uniforms.deep.value.clone();world.setNight(true);assert.ok(!water.material.uniforms.deep.value.equals(day));
+  world.update(.016,1000,world.start);assert.equal(water.material.uniforms.time.value,1000);world.setNight(false);assert.ok(water.material.uniforms.deep.value.equals(day));
+  scene.updateMatrixWorld(true);scene.traverse(o=>{assert.ok(o.matrixWorld.elements.every(Number.isFinite));if(o.isInstancedMesh)assert.ok(o.instanceMatrix.array.every(Number.isFinite));});
 });

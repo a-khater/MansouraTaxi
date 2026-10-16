@@ -1,9 +1,9 @@
 {
   "name": "mansoura-taxi",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "A procedural 3D Mansoura-inspired taxi driving game",
+  "description": "A mapped Mansoura driving game with a Hyundai Verna and Egyptian shared-taxi satire",
   "scripts": {
     "dev": "node scripts/serve.mjs",
     "build": "node scripts/build.mjs",

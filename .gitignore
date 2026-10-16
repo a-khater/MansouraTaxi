@@ -4,3 +4,6 @@ dist/
 *.tgz
 .sites-runtime/
 .sites-checkout/
+artifacts/
+__pycache__/
+*.pyc
