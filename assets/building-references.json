@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "target": "Individually reconstruct and verify every visible building on Al Mashaya, Al Gomhouria and the university corridor against current location-matched references.",
+  "statusDefinitions": {
+    "unreferenced": "Mapped or inferred massing with procedural detail; no individual facade comparison.",
+    "photo-referenced": "A specific real structure has been located and modeled using identified photographs. Dimensions and unobserved details may remain estimated. This does not establish an exact match.",
+    "survey-verified": "Reserved for measured geometry, complete dated exterior coverage and a recorded independent comparison. A photograph alone cannot establish this status."
+  },
+  "visualSimilarityPercent": null,
+  "entries": [
+    {
+      "buildingId": "building/1187267273/0",
+      "model": "university-administration",
+      "status": "photo-referenced",
+      "name": "Mansoura University General Administration",
+      "nameArabic": "الإدارة العامة لجامعة المنصورة",
+      "height": 18.5,
+      "heightSource": "Estimated from five observed storeys in the cited official photographs; not surveyed.",
+      "observationDate": null,
+      "referenceReviewedOn": "2026-10-18",
+      "geolocation": {
+        "osmType": "way",
+        "osmId": 1187267273,
+        "centroid": {
+          "lat": 31.0446252785,
+          "lon": 31.3535351182,
+          "x": -2047.23040885,
+          "z": -69.60599841
+        },
+        "officialMapUrl": "https://maps.mans.edu.eg/assets/images/map.jpg",
+        "officialContactUrl": "https://muqac.mans.edu.eg/index.php/contact-us",
+        "resolvedContactMapPin": {
+          "lat": 31.0446117,
+          "lon": 31.3535377
+        },
+        "orientation": "Main portico faces north (-z) toward Al Gomhouria; long wing extends east (+x)."
+      },
+      "references": [
+        {
+          "id": "admin-front-road",
+          "url": "https://www.mans.edu.eg/images/speasyimagegallery/albums/2/images/01.jpg",
+          "view": "north/front from street",
+          "observationDate": null
+        },
+        {
+          "id": "admin-front-courtyard",
+          "url": "https://www.mans.edu.eg/images/speasyimagegallery/albums/2/images/07.jpg",
+          "view": "north/front from inside grounds",
+          "observationDate": null
+        },
+        {
+          "id": "admin-rear",
+          "url": "https://www.mans.edu.eg/images/speasyimagegallery/albums/2/images/03.jpg",
+          "view": "rear",
+          "observationDate": null
+        },
+        {
+          "id": "admin-rear-detail",
+          "url": "https://www.mans.edu.eg/images/speasyimagegallery/albums/2/images/04.jpg",
+          "view": "rear detail",
+          "observationDate": null
+        }
+      ],
+      "observedFeatures": [
+        "Five window/storey rows",
+        "Cream plaster and projecting horizontal parapet",
+        "Curved northern pavilion on mapped footprint",
+        "Four pink-toned columns and recessed portico",
+        "Wide glazed hall and gridded wing windows",
+        "Gold university and general-administration Arabic inscriptions",
+        "Rear window security grilles and visible air-conditioning units"
+      ],
+      "remainingUnknowns": [
+        "Exact building/column/floor dimensions are not measured.",
+        "Photograph capture dates are unknown; present-day condition has not been checked.",
+        "Fine emblem glyphs, precise ornament, weathering and concealed roof details are not reconstructed.",
+        "Side elevations are incompletely documented and remain plain.",
+        "Materials, window spacing and relief depths are estimated from perspective photographs."
+      ],
+      "review": {
+        "position": [
+          -2036,
+          9,
+          -156
+        ],
+        "target": [
+          -2040,
+          8.5,
+          -72
+        ]
+      }
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "university-law-gate-3",
+      "model": "law-gate",
+      "status": "photo-referenced",
+      "name": "Mansoura University Faculty of Law Gate 3",
+      "nameArabic": "بوابة كلية الحقوق - بوابة ٣",
+      "position": {
+        "x": -1790.7490324494527,
+        "y": 0,
+        "z": -156.7826869085657
+      },
+      "rotationY": 3.052617569654179,
+      "width": 26.4,
+      "height": 9.2,
+      "depth": 4.2,
+      "vehicleDoorsOpen": true,
+      "dimensionsSource": "Estimated from the official photographs; the placement is matched to the OSM gate-canopy footprint and named gate nodes.",
+      "observationDate": null,
+      "referenceReviewedOn": "2026-10-18",
+      "replacesBuildingIds": [
+        "building/1234849113/0"
+      ],
+      "geolocation": {
+        "osmCanopyWayId": 1234849113,
+        "osmGateNodeIds": [
+          8739872428,
+          8739872429
+        ],
+        "frontGateNodeMidpoint": {
+          "lat": 31.0454306,
+          "lon": 31.35622695,
+          "x": -1790.4947823614268,
+          "z": -159.2543919998954
+        },
+        "placement": "Model center is the mapped canopy footprint centroid, behind the gate-node frontage. Local +z faces north toward Al Gomhouria."
+      },
+      "references": [
+        {
+          "url": "https://agrfac.mans.edu.eg/index.php/news-archive/5763-president-of-mansoura-university-opens-a-new-gate",
+          "type": "official opening article",
+          "supports": "Faculty of Law gate identification"
+        },
+        {
+          "url": "https://agrfac.mans.edu.eg/images/photo/news/2016/1120/03.jpg",
+          "type": "official street overview photo",
+          "observationDate": null
+        },
+        {
+          "url": "https://agrfac.mans.edu.eg/images/photo/news/2016/1120/01.jpg",
+          "type": "official front photo",
+          "observationDate": null
+        },
+        {
+          "url": "https://www.mans.edu.eg/images/speasyimagegallery/albums/1/images/35.jpg",
+          "type": "official campus gallery",
+          "observationDate": null
+        },
+        {
+          "url": "https://maps.mans.edu.eg/assets/images/map.jpg",
+          "type": "official university map",
+          "supports": "Faculty of Law entrance numbered Gate 3"
+        },
+        {
+          "url": "https://www.openstreetmap.org/way/1234849113",
+          "type": "mapped gate canopy footprint"
+        },
+        {
+          "url": "https://www.openstreetmap.org/node/8739872428",
+          "type": "named Faculty of Law Gate node"
+        },
+        {
+          "url": "https://www.openstreetmap.org/node/8739872429",
+          "type": "named Faculty of Law Gate node"
+        }
+      ],
+      "gameplayAdaptations": [
+        "Vehicle iron leaves are held open statically for passage; reference photographs show closed leaves.",
+        "Ground collision follows separate masonry piers and the closed central pedestrian door, leaving the two vehicle arches open."
+      ],
+      "remainingUnknowns": [
+        "Exact height, width, depth and decorative dimensions are estimated.",
+        "Campus gallery capture dates and present-day gate condition are unverified.",
+        "Ironwork scrolls, capitals, hidden roof surfaces and plants are interpreted from photographs."
+      ],
+      "review": {
+        "position": [
+          -1788.79,
+          6.2,
+          -178.7
+        ],
+        "target": [
+          -1790.7490324494527,
+          4.5,
+          -156.7826869085657
+        ],
+        "fov": 65
+      }
+    }
+  ]
+}

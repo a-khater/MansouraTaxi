@@ -1,14 +1,19 @@
 import * as THREE from './vendor/three.module.js';
 import { nearestRoad } from './navigation.js';
+import { buildReferenceBuilding } from './assets/reference-buildings.js';
+import { createLawGate } from './assets/law-gate.js';
 
 /** Literal OSM street/footprint geometry with explicitly interpreted facades.
  * Load assets/mansoura-map.json before calling this synchronous scene builder.
  */
-export function createWorld(scene, data) {
+export function createWorld(scene, data, catalog = {entries:[]}) {
   if (!data?.roads?.segments?.length) throw new Error('A normalized Mansoura OpenStreetMap extract is required.');
   const root = new THREE.Group(); root.name = 'Mansoura · mapped Nile district'; scene.add(root);
   const roads = data.roads, bounds = data.bounds, colliders = [], chunks = new Map();
   const geometries = new Map(), instances = new Map(), signs = new Map(), materials = {};
+  const referenceEntries=new Map((catalog.entries||[]).map(entry=>[entry.buildingId,entry])),referenceBuildings=[],referenceLandmarks=[];
+  const landmarkEntries=(catalog.landmarks||[]).filter(e=>e.model==='law-gate'&&['photo-referenced','survey-verified'].includes(e.status)&&Number.isFinite(e.position?.x)&&Number.isFinite(e.position?.z)&&Number.isFinite(e.rotationY));
+  const replacedBuildingIds=new Set(landmarkEntries.flatMap(e=>e.replacesBuildingIds||[]));
   const box = new THREE.BoxGeometry(1, 1, 1), plane = new THREE.PlaneGeometry(1, 1);
   const cylinder = new THREE.CylinderGeometry(1, 1, 1, 7), sphere = new THREE.SphereGeometry(1, 9, 6);
   const temp = new THREE.Object3D(), boats = [];
@@ -48,7 +53,7 @@ export function createWorld(scene, data) {
     return [key, chunks.get(key)];
   }
   function instance(geometry, material, x, y, z, sx = 1, sy = 1, sz = 1, rotation = 0, detail = true, rz = 0) {
-    const displayMaterial = [glass,litGlass,lampGlow].includes(material) ? material : material.side===THREE.DoubleSide ? leafSurface : propSurface;
+    const displayMaterial = material.userData.preserveReferenceMaterial||[glass,litGlass,lampGlow].includes(material) ? material : material.side===THREE.DoubleSide ? leafSurface : propSurface;
     const [key, group] = chunk(x, z), batchKey = `${key}:${geometry.uuid}:${displayMaterial.uuid}:${detail}`;
     if (!instances.has(batchKey)) instances.set(batchKey, { geometry, material:displayMaterial, group, matrices: [], colors:[], detail });
     temp.position.set(x, y, z); temp.rotation.set(0, rotation, rz); temp.scale.set(sx, sy, sz); temp.updateMatrix();
@@ -59,8 +64,8 @@ export function createWorld(scene, data) {
   const cyl = (m, x, y, z, r, h, detail = true) => instance(cylinder, m, x, y, z, r, h, r, 0, detail);
   const orb = (m, x, y, z, r, sy = r) => instance(sphere, m, x, y, z, r, sy, r);
   function addGeometry(material, x, z, positions, uvs = [], detail = false) {
-    const [key, group] = chunk(x, z), batchKey = `${key}:${detail}`;
-    if (!geometries.has(batchKey)) geometries.set(batchKey, { material:citySurface, group, positions: [], colors:[], uvs: [], detail });
+    const [key, group] = chunk(x, z), keepMaterial=material.userData.preserveReferenceMaterial,batchKey = `${key}:${keepMaterial?material.uuid:'city'}:${detail}`;
+    if (!geometries.has(batchKey)) geometries.set(batchKey, { material:keepMaterial?material:citySurface, group, positions: [], colors:[], uvs: [], detail });
     const batch = geometries.get(batchKey); batch.positions.push(...positions); batch.uvs.push(...(uvs.length ? uvs : new Array(positions.length / 3 * 2).fill(0)));
     for(let i=0;i<positions.length/3;i++)batch.colors.push(material.color.r,material.color.g,material.color.b);
   }
@@ -185,13 +190,21 @@ export function createWorld(scene, data) {
   const corridorRoads={segments:roads.segments.filter(s=>[263225726,167439775,584524658,278480505].includes(s.osmId))};
   let balconyCount=0;
   for(let bi=0;bi<allBuildings.length;bi++){
-    const building=allBuildings[bi], polygon=clean(building.points), h=building.height;
+    const building=allBuildings[bi], polygon=clean(building.points),entry=referenceEntries.get(building.id);
+    if(replacedBuildingIds.has(building.id))continue;
+    const match=entry?.model==='university-administration'&&building.osmId===1187267273&&['photo-referenced','survey-verified'].includes(entry.status)&&Number.isFinite(entry.height)&&entry.height>0;
+    const h=match?entry.height:building.height;
     if(polygon.length<3)continue;
     // Boolean clipping may return clockwise exteriors. Normalize wall winding
     // so exterior surfaces face outward instead of disappearing by backface culling.
     const signedArea=polygon.reduce((sum,p,i)=>{const b=polygon[(i+1)%polygon.length];return sum+p.x*b.z-b.x*p.z;},0);
     if(signedArea<0)polygon.reverse();
     const cx=polygon.reduce((s,p)=>s+p.x,0)/polygon.length,cz=polygon.reduce((s,p)=>s+p.z,0)/polygon.length;
+    if(match&&buildReferenceBuilding({building,entry,helpers:{mat,cube,cyl,instance,plane,box,addGeometry,flatPolygon,chunk,root}})){
+      colliders.push(polygonBox(polygon,{height:h,type:'building',sourceId:building.id,holes:building.holes||[],inferred:false,referenceStatus:entry.status,heightSource:entry.heightSource}));
+      referenceBuildings.push({buildingId:building.id,model:entry.model,status:entry.status,height:h,heightSource:entry.heightSource,observationDate:entry.observationDate,references:entry.references,remainingUnknowns:entry.remainingUnknowns});
+      continue;
+    }
     const near=nearestRoad({x:cx,z:cz},corridorRoads).distance<110;
     const nearest=near?nearestRoad({x:cx,z:cz},roads):null;
     const mass=palette[Math.abs(building.osmId||bi)%palette.length];
@@ -231,6 +244,31 @@ export function createWorld(scene, data) {
       const size=Math.min(7,(buildingBounds[bi].maxX-buildingBounds[bi].minX)*.25,(buildingBounds[bi].maxZ-buildingBounds[bi].minZ)*.25);
       if(size>2)instance(sphere,mat('dome','#81a699'),cx,h,cz,size,size*.85,size,0,false);
     }
+  }
+
+  // The real Law Gate is mapped as a canopy footprint. Its solid placeholder
+  // is replaced by the authored gate and individual ground piers, while the
+  // source OSM footprint remains intact in mapData for traceability.
+  for(const entry of landmarkEntries){
+    const gate=createLawGate(entry),angle=entry.rotationY,position=entry.position;
+    gate.position.set(position.x,position.y||0,position.z);gate.rotation.y=angle;gate.name=entry.id;
+    Object.assign(gate.userData,{referenceStatus:entry.status,referenceId:entry.id,replacesBuildingIds:entry.replacesBuildingIds||[],observationDate:entry.observationDate,remainingUnknowns:entry.remainingUnknowns});
+    chunk(position.x,position.z)[1].add(gate);
+    const sx=(entry.width||26.4)/26.4,sz=(entry.depth||4.2)/4.2;
+    const transform=(x,z)=>({x:position.x+Math.cos(angle)*x*sx+Math.sin(angle)*z*sz,z:position.z-Math.sin(angle)*x*sx+Math.cos(angle)*z*sz});
+    const parts=[[-13.1,-12.54,4.7],[-11.16,-6.45,9.2],[-1.2,-.9,8.4],[.9,1.2,8.4],[6.45,11.16,9.2],[12.54,13.1,4.7]];
+    for(let i=0;i<parts.length;i++){
+      const [left,right,h]=parts[i],points=[transform(left,-1.65),transform(right,-1.65),transform(right,1.65),transform(left,1.65)];
+      colliders.push(polygonBox(points,{height:h*(entry.height||9.2)/9.2,type:'building',sourceId:`${entry.id}/pier/${i}`,sourceBuildingId:entry.replacesBuildingIds?.[0],referenceStatus:entry.status}));
+    }
+    for(const [i,leaf]of (gate.userData.vehicleLeaves||[]).entries()){
+      const c=leaf.collider,points=[transform(c.x-c.width/2,c.z-c.depth/2),transform(c.x+c.width/2,c.z-c.depth/2),transform(c.x+c.width/2,c.z+c.depth/2),transform(c.x-c.width/2,c.z+c.depth/2)];
+      colliders.push(polygonBox(points,{height:leaf.height*(entry.height||9.2)/9.2,type:'building',sourceId:`${entry.id}/vehicle-leaf/${i}`,sourceBuildingId:entry.replacesBuildingIds?.[0],referenceStatus:entry.status}));
+    }
+    // The central pedestrian door remains closed; the vehicle arches stay clear.
+    const centralDoor=[transform(-.9,.17),transform(.9,.17),transform(.9,.34),transform(-.9,.34)];
+    colliders.push(polygonBox(centralDoor,{height:4.1,type:'building',sourceId:`${entry.id}/pedestrian-door`,sourceBuildingId:entry.replacesBuildingIds?.[0],referenceStatus:entry.status}));
+    referenceLandmarks.push({id:entry.id,model:entry.model,status:entry.status,position:{...entry.position},replacesBuildingIds:entry.replacesBuildingIds||[],references:entry.references,remainingUnknowns:entry.remainingUnknowns});
   }
 
   // Original palm fronds have leaflets and curved silhouettes, shared citywide.
@@ -317,7 +355,7 @@ export function createWorld(scene, data) {
     }
     return best||fallback();
   }
-  return {root,roads,bounds,colliders,landmarks:data.landmarks,start:data.start,groundHeight:.14,stats:{...data.stats,chunks:chunks.size},mapData:data,setFocus,heightAt:()=>.14,...spatialQueries,findSafeRoadPoint,
+  return {root,roads,bounds,colliders,landmarks:data.landmarks,start:data.start,groundHeight:.14,stats:{...data.stats,chunks:chunks.size,photoReferencedBuildings:referenceBuildings.filter(b=>b.status==='photo-referenced').length,surveyVerifiedBuildings:referenceBuildings.filter(b=>b.status==='survey-verified').length,photoReferencedLandmarks:referenceLandmarks.filter(b=>b.status==='photo-referenced').length},referenceBuildings,referenceLandmarks,mapData:data,setFocus,heightAt:()=>.14,...spatialQueries,findSafeRoadPoint,
     getDistrict(x,z){const p=nearestRoad({x,z},roads),s=roads.segments[p.segmentIndex];return {name:s?.nameEn||s?.name||'Mansoura',arabic:s?.name||'المنصورة'};},
     setNight(night){litGlass.emissiveIntensity=night?1.65:.12;glass.emissive.set(night?'#d3b987':'#000000');glass.emissiveIntensity=night?.035:0;lampGlow.emissiveIntensity=night?3:.35;waterUniforms.deep.value.set(night?'#183f4c':'#397b7c');waterUniforms.haze.value.set(night?'#172e39':'#c3bd9f');},
     update(dt,time=0,focus){waterUniforms.time.value=time;if(focus)setFocus(focus);for(const b of boats){b.group.position.y=-.13+Math.sin(time*.6+b.phase)*.07;b.group.rotation.z=Math.sin(time*.45+b.phase)*.009;}}

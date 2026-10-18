@@ -47,7 +47,10 @@ async function init() {
     const mapResponse = await fetch('assets/mansoura-map.json');
     if (!mapResponse.ok) throw new Error('The real Mansoura map could not be loaded.');
     mapData = await mapResponse.json();
-    world = createWorld(scene, mapData); taxi = createTaxi(scene); taxi.setColor(progress.paint);
+    const referenceResponse = await fetch('assets/building-references.json');
+    if (!referenceResponse.ok) throw new Error('The building reference catalog could not be loaded.');
+    const buildingReferences = await referenceResponse.json();
+    world = createWorld(scene, mapData, buildingReferences); taxi = createTaxi(scene); taxi.setColor(progress.paint);
     driving = createDriving(taxi, world.colliders, world.bounds); driving.reset(world.start || { x: 205, z: 150, heading: 0 });
     traffic = makeTraffic(scene, world.roads); scene.add(routeGroup, marker); makeMarker(); liftVehicles();
     fareSystem = createFareSystem({ landmarks: world.landmarks, roads: world.roads, start: world.start });

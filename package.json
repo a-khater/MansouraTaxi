@@ -1,12 +1,13 @@
 {
   "name": "mansoura-taxi",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "type": "module",
   "description": "A mapped Mansoura driving game with a Hyundai Verna and Egyptian shared-taxi satire",
   "scripts": {
     "dev": "node scripts/serve.mjs",
     "build": "node scripts/build.mjs",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "audit:buildings": "node scripts/audit-building-coverage.mjs"
   }
 }
