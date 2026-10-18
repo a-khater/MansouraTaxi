@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three.module.js';
 import { nearestRoad } from './navigation.js';
-import { buildReferenceBuilding } from './assets/reference-buildings.js';
+import { buildReferenceBuilding, matchesReferenceBuilding } from './assets/reference-buildings.js';
 import { createLawGate } from './assets/law-gate.js';
 
 /** Literal OSM street/footprint geometry with explicitly interpreted facades.
@@ -99,7 +99,21 @@ export function createWorld(scene, data, catalog = {entries:[]}) {
   const allBuildings = [...data.buildings, ...(data.inferredBuildings || [])];
   const buildingBounds = allBuildings.map(b => polygonBox(b.points, { source: b }));
   const inBuilding = p => buildingBounds.some(b => p.x > b.minX - 1 && p.x < b.maxX + 1 && p.z > b.minZ - 1 && p.z < b.maxZ + 1 && inside(p, b.polygon));
-  const blockedProp = p => isWater(p) || inBuilding(p);
+  // Referenced frontage strips can omit invented decoration that conflicts
+  // with the photographed view. These are art exclusions, never new colliders.
+  const propExclusions=(catalog.entries||[]).flatMap(entry=>{
+    const building=allBuildings.find(b=>b.id===entry.buildingId),front=entry.geolocation?.frontage;
+    if(!building||!matchesReferenceBuilding(building,entry)||!['photo-referenced','survey-verified'].includes(entry.status)||!front?.omitProceduralProps)return [];
+    const [a,b]=front.endpoints||[],normal=front.outwardNormal,depth=front.omitProceduralProps.depthMetres,margin=front.omitProceduralProps.endMarginMetres||0;
+    if(!a||!b||![a.x,a.z,b.x,b.z,normal?.x,normal?.z,depth,margin].every(Number.isFinite)||depth<=0)return [];
+    const length=Math.hypot(b.x-a.x,b.z-a.z);if(length<.1)return [];
+    return [{a,tx:(b.x-a.x)/length,tz:(b.z-a.z)/length,length,normal,depth,margin}];
+  });
+  const excludedProp=p=>propExclusions.some(e=>{
+    const dx=p.x-e.a.x,dz=p.z-e.a.z,along=dx*e.tx+dz*e.tz,outward=dx*e.normal.x+dz*e.normal.z;
+    return along>=-e.margin&&along<=e.length+e.margin&&outward>=0&&outward<=e.depth;
+  });
+  const blockedProp = p => isWater(p) || inBuilding(p) || excludedProp(p);
   function ribbon(points, width, material, y) {
     for (let i = 1; i < points.length; i++) {
       const a = points[i - 1], b = points[i], dx = b.x - a.x, dz = b.z - a.z, length = Math.hypot(dx, dz);
@@ -192,7 +206,7 @@ export function createWorld(scene, data, catalog = {entries:[]}) {
   for(let bi=0;bi<allBuildings.length;bi++){
     const building=allBuildings[bi], polygon=clean(building.points),entry=referenceEntries.get(building.id);
     if(replacedBuildingIds.has(building.id))continue;
-    const match=entry?.model==='university-administration'&&building.osmId===1187267273&&['photo-referenced','survey-verified'].includes(entry.status)&&Number.isFinite(entry.height)&&entry.height>0;
+    const match=matchesReferenceBuilding(building,entry)&&['photo-referenced','survey-verified'].includes(entry.status)&&Number.isFinite(entry.height)&&entry.height>0;
     const h=match?entry.height:building.height;
     if(polygon.length<3)continue;
     // Boolean clipping may return clockwise exteriors. Normalize wall winding

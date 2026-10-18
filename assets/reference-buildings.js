@@ -1,9 +1,19 @@
 import * as THREE from '../vendor/three.module.js';
+import { buildMetroFrontage } from './metro-frontage.js';
+
+export function matchesReferenceBuilding(building,entry) {
+  return !!entry && entry.buildingId===building.id && (
+    entry.model==='university-administration'&&building.osmId===1187267273 ||
+    entry.model==='metro-yamama'&&building.osmId===1154800777
+  );
+}
 
 /** Individually authored architecture from cited views. These are photo-based
  * interpretations, with estimated dimensions, not survey-grade reproductions.
  */
 export function buildReferenceBuilding({building,entry,helpers}) {
+  if(!matchesReferenceBuilding(building,entry))return false;
+  if(entry.model==='metro-yamama')return buildMetroFrontage({building,entry,helpers});
   if(entry.model!=='university-administration'||building.osmId!==1187267273)return false;
   const {mat,cube,cyl,instance,plane,box,addGeometry,flatPolygon,chunk}=helpers;
   const polygon=building.points.map(p=>({...p})),height=entry.height;

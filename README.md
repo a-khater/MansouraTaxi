@@ -1,4 +1,4 @@
-# Mansoura Taxi · 0.2.2
+# Mansoura Taxi · 0.2.3
 
 A playable 3D browser game set on mapped streets around Al-Mashaya, Al-Gomhouria and Mansoura University. Drive an original burgundy-and-cream Verna LC-inspired taxi, carry up to four unrelated passengers, and negotiate a back seat full of opinions. The Egyptian Arabic black comedy is fictional, informed by documented taxi complaints.
 
@@ -92,7 +92,7 @@ The 0.2.1 audit fixes camera/building clipping, recovery inside conflicting sour
 - `world.js`: scene construction from mapped geographic data and procedural visual details.
 - `driving.js`: vehicle physics and ambient traffic.
 - `assets/verna-model.js`: original Verna LC-inspired mesh and passenger visuals.
-- `assets/reference-buildings.js`, `assets/law-gate.js`, `assets/building-references.json`: individually referenced administration building and Law Gate 3 models, source links and unresolved details. The mapped gate canopy's generic apartment mass is replaced; the source footprint is retained.
+- `assets/reference-buildings.js`, `assets/metro-frontage.js`, `assets/law-gate.js`, `assets/building-references.json`: individually referenced administration, Metro/Coffee Wizard frontage and Law Gate 3 models, source links and unresolved details. Replacements retain their mapped footprints. Metro's balcony stacks, arches and retail frontage use identified photos; its total height, roof and hidden elevations remain unverified.
 - `navigation.js`: road graph projection and routing.
 - `rendering.js`, `assets/geometry-batching.js`: render helpers and geometry batching.
 - `assets/mansoura-map.json`, `data/source/`: derived map and retained source.

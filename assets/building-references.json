@@ -9,6 +9,86 @@
   "visualSimilarityPercent": null,
   "entries": [
     {
+      "buildingId": "building/1154800777/0",
+      "model": "metro-yamama",
+      "status": "photo-referenced",
+      "name": "Yamama Tower — Metro / Coffee Wizard frontage",
+      "nameArabic": "برج اليمامة — مترو وكوفي ويزارد",
+      "height": 26.4,
+      "heightSource": "Retained inferred map massing (26.4 m), not a measured height. Six full residential tiers and a cropped upper tier are visible; the photograph does not establish total floor count or roof height.",
+      "observationDate": null,
+      "referenceReviewedOn": "2026-10-18",
+      "geolocation": {
+        "osmType": "way",
+        "osmId": 1154800777,
+        "centroid": {"lat": 31.04535037, "lon": 31.35286221},
+        "businessMapUrl": "https://www.google.com/maps/?cid=16780231800653744360",
+        "resolvedBusinessPin": {"lat": 31.0456228, "lon": 31.3528363},
+        "frontage": {
+          "endpoints": [{"x": -2125.431, "z": -163.629}, {"x": -2098.840, "z": -164.475}],
+          "widthMetres": 26.604,
+          "outwardNormal": {"x": -0.031799, "z": -0.999494},
+          "omitProceduralProps": {"depthMetres": 14, "endMarginMetres": 3},
+          "propTreatment": "Omit invented palms, furniture and static people in the photographed street-facing strip. This removes unsupported decoration; it does not verify a complete current street-furniture inventory."
+        },
+        "orientation": "North frontage toward Lower Al Mashaya and the Nile. The business pin falls in the street north of this footprint. The official branch address and Nile-facing terrace photograph corroborate the block and orientation; exact shared-shop fascia extents remain uncertain."
+      },
+      "references": [
+        {
+          "id": "yamama-frontage-photo",
+          "url": "https://img-3.aqarmap.com.eg/new-aqarmap-media/large/2408/66ab99b4a7a97484226349.jpeg",
+          "view": "Street-facing central cream/peach facade, Metro fascia, Coffee Wizard, arches and residential balconies; top cropped",
+          "observationDate": null
+        },
+        {
+          "id": "yamama-property-listing",
+          "url": "https://aqarmap.com.eg/ar/listing/4962385-for-sale-dakahlia-mansoura-el-mansoura-city-el-gomhouria-st/",
+          "supports": "Listing places the property above Metro, Lower Al Mashaya; listing date is not a photo capture date."
+        },
+        {
+          "id": "wizard-registration",
+          "url": "https://www.itda.gov.eg/crm/853/CRA109.pdf",
+          "page": 18,
+          "supports": "Official branch registration identifies Coffee Wizard on first floor, Yamama Tower, Lower Al Mashaya extension."
+        },
+        {
+          "id": "wizard-nile-terrace",
+          "url": "https://img05.restaurantguru.com/r700-Coffee-Wizard-view.jpg",
+          "view": "Cafe terrace with Nile directly across the street; orientation corroboration",
+          "observationDate": null
+        },
+        {
+          "id": "wizard-street-entrance",
+          "url": "https://img05.restaurantguru.com/r418-exterior-Coffee-Wizard.jpg",
+          "view": "Stair entrance and Metro fascia corroborate the principal photograph",
+          "observationDate": null
+        },
+        {"url": "https://www.openstreetmap.org/way/1154800777", "type": "mapped footprint"}
+      ],
+      "observedFeatures": [
+        "Cream plaster with peach/ochre projecting vertical piers and balcony aprons",
+        "Six distinct residential bay stacks with mixed open balconies and enclosed glazing",
+        "Six full residential tiers and a cropped upper tier in the principal photo",
+        "Rounded projecting balcony edges and dark railings",
+        "Three shallow arches over the left part of the commercial frontage",
+        "Coffee Wizard terrace and sign on the western portion of the frontage",
+        "Metro commercial sign band and recessed street entrance"
+      ],
+      "remainingUnknowns": [
+        "The photograph crops the roof and uppermost extent; massing height and upper closeout remain inferred.",
+        "Capture dates and present-day condition are unknown.",
+        "The block and north frontage are strongly supported; exact limits of shared retail fascias across neighboring footprints are not measured.",
+        "Perspective-derived bay widths, balcony depths, floor spacing, materials and weathering are estimates.",
+        "Rear, side elevations, concealed spaces, exact AC and cable positions, and fine signage glyphs lack complete coverage.",
+        "Procedural palms and furniture are omitted from the observed frontage strip; actual street-furniture coverage remains incomplete."
+      ],
+      "review": {
+        "position": [-2111.6, 13.1, -188],
+        "target": [-2112.1355, 12.7, -163.5],
+        "fov": 65
+      }
+    },
+    {
       "buildingId": "building/1187267273/0",
       "model": "university-administration",
       "status": "photo-referenced",

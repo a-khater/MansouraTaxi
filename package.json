@@ -1,6 +1,6 @@
 {
   "name": "mansoura-taxi",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "type": "module",
   "description": "A mapped Mansoura driving game with a Hyundai Verna and Egyptian shared-taxi satire",
