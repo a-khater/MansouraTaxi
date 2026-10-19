@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAtUTC": "2026-10-19T06:58:44.884Z",
+  "generatedAtUTC": "2026-10-19T07:14:07.688Z",
   "coordinateSystem": {
     "units": "centimetres",
     "axes": "Unreal X forward, Y right, Z up",
@@ -23,7 +23,7 @@
     "assets/geometry-batching.js": "89e248dcfa7ded66d9dd0bc983687065a1951669afcbe9e19a6c26899370969a",
     "world.js": "d96a1f931b6ef601c26dc77bd746a0f7137b6aa9746adb4ba8da8e2fb4df8ad5",
     "assets/mansoura-map.json": "997bc7396d94d2889c3ecc719125f1b91d6826178eda2bbffbd0208ce502d2bb",
-    "assets/building-references.json": "4130caf58063e2cab9f23e7f2568c66d3f8f08ba13760d6874fe117f4f129ec0"
+    "assets/building-references.json": "54a1e675ab4f8c07510df0bc5ccee9087962d3bcce8b631417f867d8defa6d76"
   },
   "entries": [
     {
