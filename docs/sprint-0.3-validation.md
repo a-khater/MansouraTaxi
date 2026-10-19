@@ -19,3 +19,11 @@ The water collision fix preserves original road/water polygons and clears only b
 - **Driving QA:** browser UI/visual smoke checks and deterministic driving simulations passed; a sustained hands-on drive on this device, an entire shared-taxi journey, native handling calibration and performance measurements remain required. Screenshots are browser prototype output, not UE output.
 
 Follow-up issue drafts with scope and acceptance criteria are in `docs/next-sprint-issues.json`. They cover actual UE build/runtime, GPU streaming, facade surveys/landmark reconstruction, Verna rig/handling, native gameplay parity, audio and dense street-life performance.
+
+## Delivery checks
+
+The browser update is published at https://mansoura-taxi-open-world.cherrytrail953938.chatgpt.site with owner-private access preserved. The published map visibly includes the governorate, stadium and El Geish court destinations; choosing the courts produced an Arabic objective and road route without captured console warnings/errors. The final mobile HUD removes the overlapping camera label. These remain browser prototype checks.
+
+All eight follow-up issues were created and verified in [a-khater/MansouraTaxi](https://github.com/a-khater/MansouraTaxi/issues), numbered 1–8. The source is committed and pushed to the Site repository. A direct push to the separate GitHub origin failed because its saved credentials are invalid; the signed-in browser's upload attempt was also blocked by the extension's file-URL permission. GitHub source synchronization therefore remains pending authentication or upload access. A complete verified Git bundle is available locally under ignored `artifacts/` for handoff.
+
+Native provenance was also compared with the actual committed Git blobs. An existing CRLF JSON source discrepancy was corrected and `.gitattributes` pins source line endings to LF so fresh Windows/Linux checkouts preserve those hashes. All six native asset tests passed again after re-export.
