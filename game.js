@@ -4,6 +4,8 @@ import { createTaxi, createDriving, makeTraffic, vehiclesOverlap } from './drivi
 import { nearestRoad, routeTo } from './navigation.js';
 import { createFareSystem } from './fares.js';
 import { createRenderPipeline } from './rendering.js';
+import { createStreetLife } from './street-life.js';
+import { createStreetAmbience } from './street-audio.js';
 
 const $ = id => document.getElementById(id);
 const clamp = THREE.MathUtils.clamp;
@@ -13,7 +15,7 @@ let playing = false, paused = false, mode = 'roam', night = false, cameraMode = 
 let elapsed = 0, uiTimer = 0, routeTimer = 0, lastFrame = 0, toastTimer, panelType;
 let route = { points: [], length: 0 }, waypoint = null;
 let appliedCash = 0, appliedTrips = 0, lastDialogue = '', lastTargetKey = '';
-let engineAudio = null, soundEnabled = false, trafficDensity = 1, quality = 'high';
+let engineAudio = null, streetAmbience = null, streetLife, streetLines = [], soundEnabled = false, trafficDensity = 1, quality = 'high';
 let progress = { cash: 0, trips: 0, paint: '#853f42' };
 try { const saved = JSON.parse(localStorage.getItem('mansoura-taxi-v1')); if (saved) progress = { ...progress, ...saved }; } catch {}
 const save = () => { try { localStorage.setItem('mansoura-taxi-v1', JSON.stringify(progress)); } catch {} };
@@ -51,6 +53,9 @@ async function init() {
     if (!referenceResponse.ok) throw new Error('The building reference catalog could not be loaded.');
     const buildingReferences = await referenceResponse.json();
     world = createWorld(scene, mapData, buildingReferences); taxi = createTaxi(scene); taxi.setColor(progress.paint);
+    streetLife = createStreetLife(scene, world, mapData);
+    const linesResponse = await fetch('assets/egyptian-street-lines.json');
+    if (linesResponse.ok) streetLines = (await linesResponse.json()).lines || [];
     driving = createDriving(taxi, world.colliders, world.bounds); driving.reset(world.start || { x: 205, z: 150, heading: 0 });
     traffic = makeTraffic(scene, world.roads); scene.add(routeGroup, marker); makeMarker(); liftVehicles();
     fareSystem = createFareSystem({ landmarks: world.landmarks, roads: world.roads, start: world.start });
@@ -123,8 +128,8 @@ function startGame() {
 function setFreeObjective() {
   $('modeLabel').textContent = mode === 'night' ? 'AFTER HOURS' : 'FREE ROAM';
   $('dispatchLabel').textContent = waypoint ? 'YOUR NEXT STOP' : 'TAKE IT ALL IN';
-  $('objectiveTitle').textContent = waypoint ? waypoint.name || 'Custom destination' : 'Welcome to Al Mashaya.';
-  $('objectiveDetail').textContent = waypoint ? 'Follow the amber route to your destination.' : 'Follow the river. Find your own way.';
+  $('objectiveTitle').textContent = waypoint ? waypoint.name || 'Custom destination' : 'Welcome to Mansoura.';
+  $('objectiveDetail').textContent = waypoint ? 'Follow the amber route to your destination.' : 'University gates, busy streets. Find your own way.';
   $('dispatchButton').innerHTML = waypoint ? 'CLEAR DESTINATION <span>×</span>' : 'START A TAXI SHIFT <span>↗</span>';
   $('fareTimer').textContent = ''; $('fareProgress').classList.add('hidden');
   $('fareChoices').classList.add('hidden'); $('shiftStatus').classList.add('hidden'); $('streetDialogue').classList.add('hidden');
@@ -275,7 +280,7 @@ function frame(timestamp) {
   const active = !paused; if (active) elapsed += dt;
   if (playing && active) {
     const input = { throttle: (keys.has('KeyW') || keys.has('ArrowUp') || touch.has('throttle') ? 1 : 0) - (keys.has('KeyS') || keys.has('ArrowDown') || touch.has('reverse') ? 1 : 0), steer: (keys.has('KeyA') || keys.has('ArrowLeft') || touch.has('left') ? 1 : 0) - (keys.has('KeyD') || keys.has('ArrowRight') || touch.has('right') ? 1 : 0), brake: keys.has('Space') || touch.has('brake'), boost: keys.has('ShiftLeft') || keys.has('ShiftRight') };
-    driving.update(dt, input); traffic.update(dt, driving.state); world.update?.(dt, elapsed);
+    driving.update(dt, input); traffic.update(dt, driving.state); world.update?.(dt, elapsed); streetLife.update(dt, driving.state, elapsed);
     for (const car of traffic.cars) {
       if (!car.group.visible || !vehiclesOverlap(driving.state, car) || driving.state.collisionTimer > 0 || Math.abs(driving.state.speed) < 2) continue;
       driving.state.health = Math.max(0, driving.state.health - Math.min(8, Math.abs(driving.state.speed) * .3)); driving.state.speed *= -.15; driving.state.collisionTimer = .9; toast('A little too close. Easy on the traffic.'); break;
@@ -283,7 +288,8 @@ function frame(timestamp) {
     if (fareSystem.state.active) { fareSystem.update(dt, driving.state); processFareEvents(); }
     if (driving.state.health <= 0) { resetTaxi(); toast('Taxi repaired and returned to the road. Take it easy out there.'); }
     routeTimer += dt; if (routeTimer > 1) { routeTimer = 0; if (currentTarget()) rebuildRoute(); }
-  } else if (!playing && active) { traffic.update(dt, driving.state); world.update?.(dt, elapsed); }
+  } else if (!playing && active) { traffic.update(dt, driving.state); world.update?.(dt, elapsed); streetLife.update(dt, driving.state, elapsed); }
+  streetAmbience?.update(dt, {active:playing && !paused,crowd:streetLife.stats.visiblePedestrians,traffic:traffic.cars.filter(c=>c.active&&Math.hypot(c.x-driving.state.x,c.z-driving.state.z)<180).length});
   world.setFocus?.(driving.state.x, driving.state.z); liftVehicles(); updateAudio();
   markerRing.rotation.z = elapsed * .15; markerPin.rotation.y = elapsed; markerPin.position.y = 7.8 + Math.sin(elapsed * 2) * .45;
   updateCamera(dt); uiTimer += dt; if (uiTimer > .08) { uiTimer = 0; if (playing) updateHUD(); }
@@ -297,8 +303,8 @@ function updateCamera(dt) {
     cameraDesired.set(s.x - forward.x * 17 + rightX * (8 + Math.sin(elapsed * .09)), 5.9, s.z - forward.z * 17 + rightZ * 8);
     lookDesired.set(s.x + forward.x * 8 - rightX * 4, 1.25, s.z + forward.z * 8 - rightZ * 4);
   } else {
-    const distance = cameraMode === 1 ? 24 : cameraMode === 2 ? -.65 : 12.8 + Math.abs(s.speed) * .065;
-    cameraDesired.set(s.x - forward.x * distance, cameraMode === 1 ? 20 : cameraMode === 2 ? 1.65 : 6.1, s.z - forward.z * distance);
+    const distance = cameraMode === 1 ? 24 : cameraMode === 2 ? -.65 : 9.5 + Math.abs(s.speed) * .04;
+    cameraDesired.set(s.x - forward.x * distance, cameraMode === 1 ? 20 : cameraMode === 2 ? 1.65 : 3.3, s.z - forward.z * distance);
     lookDesired.set(s.x + forward.x * (cameraMode === 2 ? 20 : 9), cameraMode === 2 ? 1.45 : 1.6, s.z + forward.z * (cameraMode === 2 ? 20 : 9));
   }
   const smoothing = 1 - Math.exp(-(cameraMode === 2 && playing ? 16 : 5) * dt);
@@ -330,6 +336,14 @@ function resetTaxi() {
   keys.clear(); touch.clear(); rebuildRoute();
 }
 
+function chooseMapDestination(point) {
+  if (fareSystem.state.active) { toast('End your taxi shift before choosing a free-roam destination.'); return; }
+  if (!routeTo(driving.state,point,world.roads).reachable || !routeTo(point,driving.state,world.roads).reachable) { toast('Choose a connected street with a mapped return route.'); return; }
+  waypoint={...point,name:point.arabic||point.nameEn||point.name||'Your next stop'};
+  closePanel(); if (!playing) { mode=night?'night':'roam'; const selected=waypoint; startGame(); waypoint=selected; }
+  setFreeObjective(); toast('Destination set. Follow the amber route.');
+}
+
 function showPanel(type) {
   panelType = type; paused = true; keys.clear(); touch.clear(); const p = $('panelContent');
   if (type === 'pause') {
@@ -342,15 +356,18 @@ function showPanel(type) {
     p.innerHTML = `<p class="panel-kicker">MAKE IT YOUR DRIVE</p><h2>Your kind of city.</h2><div class="setting-row"><span>Time of day</span><div>${[['day','GOLDEN HOUR'],['night','AFTER HOURS']].map(([v,l])=>`<button class="setting-choice ${night === (v==='night') ? 'active' : ''}" data-time="${v}">${l}</button>`).join('')}</div></div><div class="setting-row"><span>Street traffic</span><div>${[['0','QUIET'],['0.5','REGULAR'],['1','BUSY']].map(([v,l])=>`<button class="setting-choice ${trafficDensity === +v ? 'active' : ''}" data-density="${v}">${l}</button>`).join('')}</div></div><div class="setting-row"><span>Engine & horn</span><button class="setting-choice active" data-action="sound">${soundEnabled ? 'SOUND ON' : 'SOUND OFF'}</button></div><div class="setting-row"><span>Graphics</span><div><button class="setting-choice ${quality === 'high' ? 'active' : ''}" data-quality="high">DETAILED</button><button class="setting-choice ${quality === 'low' ? 'active' : ''}" data-quality="low">LIGHTWEIGHT</button></div></div><div class="panel-actions"><button class="panel-button" data-action="resume">BACK TO THE CITY ↗</button><button class="panel-button secondary" data-action="controls">CONTROLS</button></div>`;
   } else if (type === 'city') {
     p.innerHTML = `<p class="panel-kicker">03 — THE ACTUAL STREET NETWORK</p><h2>من المشاية للجامعة.</h2><canvas id="cityMap" class="city-map" width="900" height="630" aria-label="Geographic Mansoura map. Click a street to set a destination."></canvas><div class="city-key"><span><i></i> NEXT STOP</span><span><i></i> CITY LANDMARK</span><span>▲ YOU ARE HERE</span></div><p class="map-note">${fareSystem.state.active ? 'End the taxi shift to set a free-roam destination.' : 'Click a connected street to set a destination.'} Streets, river and mapped building footprints retain their geographic coordinates. Missing heights and frontage details are inferred.</p><p class="map-attribution"><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors · ODbL</a></p><button class="sources-link" data-action="about">ACCURACY, RESEARCH & CREDITS ↗</button>`;
-    drawMap($('cityMap')); $('cityMap').addEventListener('click', event => {
+    drawMap($('cityMap'));
+    const destinations=document.createElement('div'); destinations.className='destination-list'; destinations.setAttribute('aria-label','Mansoura destinations');
+    for (const place of mapData.landmarks.filter(l=>Array.isArray(l.referenceUrls))) {
+      const button=document.createElement('button'); button.textContent=place.arabic||place.name; button.setAttribute('aria-label','الذهاب إلى '+(place.arabic||place.name));
+      button.addEventListener('click',()=>chooseMapDestination(place)); destinations.append(button);
+    }
+    $('cityMap').insertAdjacentElement('afterend',destinations);
+    $('cityMap').addEventListener('click', event => {
       if (fareSystem.state.active) { toast('End your taxi shift before choosing a free-roam destination.'); return; }
       const canvas = event.currentTarget, box = canvas.getBoundingClientRect(), map = pointerMap.get(canvas);
       const point = nearestRoad({ x: ((event.clientX - box.left) * canvas.width / box.width - map.w / 2) / map.scale + map.cx, z: ((event.clientY - box.top) * canvas.height / box.height - map.h / 2) / map.scale + map.cz }, world.roads);
-      const candidateRoute = routeTo(driving.state, point, world.roads);
-      if (candidateRoute.reachable === false) { toast('That street is disconnected from this driving network. Choose a nearby street.'); return; }
-      if (routeTo(point, driving.state, world.roads).reachable === false) { toast('That map-edge street has no mapped return route. Choose a nearby street.'); return; }
-      waypoint = { ...point, name: point.nameEn || point.name || 'Your next stop' };
-      closePanel(); if (!playing) { mode = night ? 'night' : 'roam'; const selected = waypoint; startGame(); waypoint = selected; } setFreeObjective(); toast('Destination set. Follow the amber route.');
+      chooseMapDestination(point);
     });
   } else if (type === 'about') {
     p.innerHTML = `<p class="panel-kicker">THE PLACE IS REAL. THE ARGUMENTS ARE FICTIONAL.</p><h2>البلد مش مربعات.</h2><p>The Al Mashaya–Al Gomhouria–university district now uses an attributed OpenStreetMap extract: ${world.roads.segments.length.toLocaleString()} road segments, ${mapData.buildings.length.toLocaleString()} mapped building footprints, the Nile polygon and connected intersections. Horizontal coordinates are retained at meter scale. The map includes a bounded part of Mansoura and Talkha.</p><p>Footprint coverage is incomplete. Most heights, façade materials, windows, shop signs and unmapped frontage are inferred. The visuals have not been validated to 99% similarity. Reaching that target requires current street-level reference coverage, individually reconstructed façades and comparison against a documented survey.</p><p>The original Hyundai Verna model uses measured proportions and photo references. Passenger characters and Egyptian Arabic dialogue are fictional satire informed by local accounts of destination refusals, fare disputes and pooled rides. Individual accounts are anecdotes, not a claim about every driver. Prices are game currency.</p><p>Map: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors, ODbL</a>. Research: <a href="RESEARCH.md" target="_blank" rel="noopener">source notes and footage references</a>. Rendering: Three.js, physically based materials, environment reflections, ACES and postprocessing (MIT). Type: Barlow / Noto Sans Arabic (OFL). Models, decorative textures and synthesized sounds are original.</p><div class="panel-actions"><button class="panel-button" data-action="city">BACK TO THE MAP ↗</button></div>`;
@@ -362,6 +379,7 @@ function closePanel() { $('panelDialog').close(); paused = false; panelType = nu
 
 function toggleSound() {
   soundEnabled = !soundEnabled; if (soundEnabled) startAudio(); else if (engineAudio) engineAudio.master.gain.value = 0;
+  streetAmbience?.setEnabled(soundEnabled);
   $('soundButton').textContent = soundEnabled ? '♫' : '♪'; $('soundButton').setAttribute('aria-label', soundEnabled ? 'Mute engine sound' : 'Enable engine sound');
   if (panelType === 'settings') showPanel('settings');
 }
@@ -373,6 +391,8 @@ function startAudio() {
       master.gain.value = .28; master.connect(context.destination); oscillator.type = 'sawtooth'; oscillator.frequency.value = 42; filter.type = 'lowpass'; filter.frequency.value = 160; gain.gain.value = .08; oscillator.connect(filter).connect(gain).connect(master); oscillator.start(); engineAudio = { context, master, oscillator, filter, gain };
     }
     engineAudio.context.resume(); engineAudio.master.gain.value = .28;
+    if (!streetAmbience) streetAmbience = createStreetAmbience(engineAudio.context,engineAudio.master,{lines:streetLines,caption:text=>{ $('cityCaption').textContent=text; $('cityCaption').classList.toggle('hidden',!text); }});
+    streetAmbience.setEnabled(soundEnabled);
   } catch { soundEnabled = false; }
 }
 
@@ -405,7 +425,7 @@ function bindEvents() {
     const button = event.target.closest('button'); if (!button) return; const data = button.dataset;
     if (data.paint) { progress.paint = data.paint; taxi.setColor(data.paint); save(); showPanel('garage'); toast('Fresh paint. Same Mansoura soul.'); }
     if (data.time) { applyNight(data.time === 'night'); showPanel('settings'); }
-    if (data.density) { trafficDensity = +data.density; traffic.setDensity(trafficDensity); showPanel('settings'); }
+    if (data.density) { trafficDensity = +data.density; traffic.setDensity(trafficDensity); streetLife.setDensity(trafficDensity); showPanel('settings'); }
     if (data.quality) { quality = data.quality; renderer.shadowMap.enabled = quality === 'high'; renderer.setPixelRatio(quality === 'high' ? Math.min(devicePixelRatio, 1.75) : 1); pipeline.setQuality(quality); pipeline.resize(innerWidth, innerHeight); showPanel('settings'); }
     if (data.action === 'resume') closePanel();
     if (['settings','controls','city','about'].includes(data.action)) showPanel(data.action);
@@ -414,6 +434,7 @@ function bindEvents() {
     if (data.action === 'menu') { closePanel(); playing = false; fareSystem.stopShift(); processFareEvents(); waypoint = null; clearRouteMeshes(); marker.visible = false; driving.reset(world.start); document.body.classList.remove('playing'); $('menu').classList.remove('hidden'); $('topbar').classList.remove('hidden'); $('hud').classList.add('hidden'); $('mobileControls').classList.add('hidden'); if (engineAudio) engineAudio.gain.gain.value = 0; }
   });
   window.addEventListener('keydown', event => {
+    if (event.code === 'Tab' && playing && !$('panelDialog').open) { event.preventDefault(); document.body.classList.toggle('minimal-hud'); return; }
     if (['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(event.code) && playing) event.preventDefault();
     if (event.repeat) return;
     if (event.code === 'Escape') { event.preventDefault(); if ($('panelDialog').open) closePanel(); else if (playing) showPanel('pause'); return; }

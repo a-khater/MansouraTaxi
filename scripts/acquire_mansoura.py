@@ -4,6 +4,7 @@ Usage: python scripts/acquire_mansoura.py
 OpenStreetMap contributors, ODbL 1.0. This script does not request map tiles.
 """
 import datetime
+import argparse
 import json
 import math
 import pathlib
@@ -31,8 +32,15 @@ out body geom;
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--bbox', nargs=4, type=float, default=BBOX)
+    parser.add_argument('--source', default='data/source/mansoura-osm-source.json')
+    parser.add_argument('--output', default='assets/mansoura-map.json')
+    args = parser.parse_args()
+    bbox = args.bbox
+    query = QUERY.replace('(31.033,31.350,31.060,31.398)', '(' + ','.join(map(str, bbox)) + ')')
     assets = ROOT / "assets"
-    raw_path = ROOT / "data" / "source" / "mansoura-osm-source.json"
+    raw_path = ROOT / args.source
     raw_path.parent.mkdir(parents=True, exist_ok=True)
     if raw_path.exists():
         raw = json.loads(raw_path.read_text(encoding="utf-8"))
@@ -43,13 +51,13 @@ def main():
         for endpoint in ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter"]:
             try:
                 print("Requesting", endpoint, flush=True)
-                request = urllib.request.Request(endpoint, data=urllib.parse.urlencode({"data": QUERY}).encode(), headers={"User-Agent": "MansouraTaxiPrototype/1.0 (bounded offline game extract)", "Content-Type": "application/x-www-form-urlencoded"})
-                with urllib.request.urlopen(request, timeout=150) as response:
+                request = urllib.request.Request(endpoint + '?' + urllib.parse.urlencode({"data": query}), headers={"User-Agent": "MansouraTaxi/0.3 (bounded offline game extract)"})
+                with urllib.request.urlopen(request, timeout=55) as response:
                     raw = json.load(response)
                 if "elements" not in raw:
                     raise ValueError("Overpass returned no elements")
                 acquired = datetime.datetime.now(datetime.timezone.utc).isoformat()
-                raw["_acquisition"] = {"endpoint": endpoint, "retrievedAt": acquired, "query": QUERY}
+                raw["_acquisition"] = {"endpoint": endpoint, "retrievedAt": acquired, "query": query}
                 raw_path.write_text(json.dumps(raw, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
                 break
             except Exception as error:
@@ -79,16 +87,17 @@ def main():
                 if member_geo:
                     item["members"].append({"role": member.get("role", ""), "osmId": member["ref"], "points": [project(p["lat"], p["lon"]) for p in member_geo if p]})
         features.append(item)
-    west_south = project(BBOX[0], BBOX[1]); east_north = project(BBOX[2], BBOX[3])
+    west_south = project(bbox[0], bbox[1]); east_north = project(bbox[2], bbox[3])
     data = {
         "schemaVersion": 2,
-        "provenance": {"source": "OpenStreetMap contributors", "sourceUrl": "https://www.openstreetmap.org/copyright", "license": "ODbL-1.0", "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/", "endpoint": endpoint, "retrievedAt": acquired, "osmBaseTimestamp": raw.get("osm3s", {}).get("timestamp_osm_base"), "bbox": BBOX, "query": QUERY, "note": "Original OSM coordinates retained in raw source; projected data is a derived database. Missing building heights are explicitly inferred at render time. No claim of photorealistic or complete survey accuracy."},
+        "provenance": {"source": "OpenStreetMap contributors", "sourceUrl": "https://www.openstreetmap.org/copyright", "license": "ODbL-1.0", "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/", "endpoint": endpoint, "retrievedAt": acquired, "osmBaseTimestamp": raw.get("osm3s", {}).get("timestamp_osm_base"), "bbox": bbox, "query": query, "sourceCache": args.source, "note": "Original OSM coordinates retained in raw source; projected data is a derived database. Missing building heights are explicitly inferred at render time. No claim of photorealistic or complete survey accuracy."},
         "projection": {"type": "local-equirectangular", "origin": ORIGIN, "metersPerLatitudeDegree": 111320, "metersPerLongitudeDegree": 111320 * math.cos(math.radians(ORIGIN["lat"])), "axes": {"x": "east", "z": "south"}},
         "bounds": {"minX": west_south["x"], "maxX": east_north["x"], "minZ": east_north["z"], "maxZ": west_south["z"]},
         "features": features,
     }
     data = normalize(data)
-    path = assets / "mansoura-map.json"
+    path = ROOT / args.output
+    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     print(json.dumps({"bytes": path.stat().st_size, **data['stats']}, indent=2))
 

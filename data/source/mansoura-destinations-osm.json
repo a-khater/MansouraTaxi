@@ -1,0 +1,320 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-10-18T21:39:36Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+    {
+      "type": "node",
+      "id": 3118482920,
+      "lat": 31.0468809,
+      "lon": 31.3604104,
+      "tags": {
+        "addr:city": "المنصورة",
+        "addr:country": "EG",
+        "addr:postcode": "35516",
+        "addr:street": "طريق المشايه السفلى",
+        "description": "نادي الحوار للألعاب الرياضية - Hawar Sports Club",
+        "image": "https://scontent.faly2-1.fna.fbcdn.net/v/t1.6435-9/39249475_1896312120674265_1226233581282525184_n.png?_nc_cat=107&ccb=1-3&_nc_sid=174925&_nc_ohc=nu4R3JtFpgAAX9mSFGz&_nc_ht=scontent.faly2-1.fna&oh=8bbae2f080bad0a0e57823c8ce61b443&oe=60CAF8D5",
+        "name": "نادي الحوار للألعاب الرياضية",
+        "name:en": "Hawar Sports Club",
+        "start_date": "2004-1-1"
+      }
+    },
+    {
+      "type": "node",
+      "id": 3118523495,
+      "lat": 31.0453946,
+      "lon": 31.3656479,
+      "tags": {
+        "amenity": "hospital",
+        "building:levels": "4",
+        "healthcare": "hospital",
+        "name": "مستشفى الجزيرة الدولى - السلاب",
+        "name:ar": "مستشفى الجزيرة الدولى - السلاب",
+        "name:en": "Gezeera International Hospital - El Sallab",
+        "phone": "+20 50 2370051",
+        "website": "https://www.elsallabhospital.org/",
+        "wheelchair": "limited"
+      }
+    },
+    {
+      "type": "node",
+      "id": 3119668295,
+      "lat": 31.0475408,
+      "lon": 31.3886277,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "Al-Hekma Hospital"
+      }
+    },
+    {
+      "type": "node",
+      "id": 4765039480,
+      "lat": 31.0474963,
+      "lon": 31.3844462,
+      "tags": {
+        "addr:city": "المنصورة",
+        "addr:housenumber": "195",
+        "addr:street": "شارع الجمهورية",
+        "amenity": "hospital",
+        "description": "Outpatient Clinic",
+        "elevator": "yes",
+        "email": "mhegazy@mans.edu.eg",
+        "emergency": "no",
+        "healthcare": "hospital",
+        "level": "5",
+        "name": "عيادة أ.د. محمد أبوحجازى لطب المخ والأعصاب Prof.Dr. Mohammad Abu-Hegazy, Neurology Consultant",
+        "name:ar": "عيادة أ.د. محمد أبوحجازى لطب المخ والأعصاب Prof.Dr. Mohammad Abu-Hegazy, Neurology Consultant",
+        "operator": "Prof. Dr. Mohammad Abu-Hegazy",
+        "phone": "+20502227981;+201063576123",
+        "wheelchair": "yes"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5587465366,
+      "lat": 31.0457302,
+      "lon": 31.39453,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "healthcare:speciality": "infant",
+        "name": "Tabarak Hospital"
+      }
+    },
+    {
+      "type": "node",
+      "id": 5900240797,
+      "lat": 31.0427801,
+      "lon": 31.3783093,
+      "tags": {
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "التأمين الصحي",
+        "name:ar": "التأمين الصحي"
+      }
+    },
+    {
+      "type": "node",
+      "id": 7112666501,
+      "lat": 31.0577273,
+      "lon": 31.4053525,
+      "tags": {
+        "addr:country": "EG",
+        "addr:district": "ثان المنصوره",
+        "addr:district:en": "Second Al Mansoura",
+        "addr:housenumber": "1",
+        "addr:postcode": "35523",
+        "addr:province": "الدقهلية",
+        "addr:province:en": "Al Daqahlia",
+        "addr:street": "شارع الإمام محمد عبده",
+        "addr:street:en": "Al Imam Mohamed Abdo Street",
+        "addr:subdistrict": "جديله",
+        "addr:subdistrict:en": "Gedila",
+        "name": "الهلالي للبصريات فرع توريل",
+        "opening_hours": "10:00-22:00",
+        "operator": "الهلالي للبصريات",
+        "payment:cash": "yes",
+        "payment:credit_cards": "yes",
+        "payment:mastercard": "yes",
+        "payment:visa": "yes",
+        "shop": "optician",
+        "website": "https://el-helaly.com/"
+      }
+    },
+    {
+      "type": "node",
+      "id": 8764103655,
+      "lat": 31.0442384,
+      "lon": 31.3655781,
+      "tags": {
+        "amenity": "hospital",
+        "description": "برنامج متكامل لمتابعة الأطفال حديثى الولادة مقدم من مؤسسة شبكة الأطفال حديثى الولادة المصرية",
+        "healthcare": "clinic",
+        "name": "برنامج متابعة وليدك (2) - العيادات التخصصية"
+      }
+    },
+    {
+      "type": "node",
+      "id": 14247726101,
+      "lat": 31.054478,
+      "lon": 31.4104502,
+      "tags": {
+        "amenity": "hospital",
+        "name": "مستشفى الأهرام التخصصي"
+      }
+    },
+    {
+      "type": "way",
+      "id": 256122278,
+      "center": {
+        "lat": 31.0470126,
+        "lon": 31.3690735
+      },
+      "tags": {
+        "area": "yes",
+        "name": "نادي جزيرة الورد الرياضي",
+        "name:ar": "نادي جزيرة الورد الرياضي"
+      }
+    },
+    {
+      "type": "way",
+      "id": 579435682,
+      "center": {
+        "lat": 31.0201804,
+        "lon": 31.3959659
+      },
+      "tags": {
+        "addr:city": "Mansoura",
+        "addr:street": "كوبرى سندوب",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "healthcare:speciality": "general",
+        "name": "Mansoura Military Hospital",
+        "name:ar": "مستشفي المنصورة العسكري"
+      }
+    },
+    {
+      "type": "way",
+      "id": 587301910,
+      "center": {
+        "lat": 31.0317905,
+        "lon": 31.3907121
+      },
+      "tags": {
+        "amenity": "hospital",
+        "emergency": "yes",
+        "healthcare": "hospital",
+        "name": "المستشفى الدولي",
+        "name:ar": "المستشفى الدولي",
+        "name:arz": "المستشفى الدولي",
+        "name:en": "International Hospital"
+      }
+    },
+    {
+      "type": "way",
+      "id": 685637402,
+      "center": {
+        "lat": 31.0603597,
+        "lon": 31.3753601
+      },
+      "tags": {
+        "highway": "residential",
+        "name": "شارع جزيره الورد",
+        "name:ar": "شارع جزيره الورد",
+        "name:en": "Gezira Al Ward Street"
+      }
+    },
+    {
+      "type": "way",
+      "id": 759971519,
+      "center": {
+        "lat": 31.0401561,
+        "lon": 31.3738582
+      },
+      "tags": {
+        "landuse": "residential",
+        "name": "ثان الحوار",
+        "name:ar": "ثان الحوار",
+        "name:en": "Second Al Hewar",
+        "place": "neighbourhood"
+      }
+    },
+    {
+      "type": "way",
+      "id": 760211075,
+      "center": {
+        "lat": 31.0560892,
+        "lon": 31.404208
+      },
+      "tags": {
+        "highway": "residential",
+        "name": "شارع مناره توريل",
+        "name:ar": "شارع مناره توريل",
+        "name:en": "Manara Toril Street"
+      }
+    },
+    {
+      "type": "way",
+      "id": 760211088,
+      "center": {
+        "lat": 31.0557079,
+        "lon": 31.4060859
+      },
+      "tags": {
+        "highway": "residential",
+        "name": "شارع توريل",
+        "name:ar": "شارع توريل",
+        "name:en": "Torel Street"
+      }
+    },
+    {
+      "type": "way",
+      "id": 772347551,
+      "center": {
+        "lat": 31.0324891,
+        "lon": 31.372905
+      },
+      "tags": {
+        "amenity": "hospital",
+        "name": "مستشفي الصدر",
+        "name:ar": "مستشفي الصدر"
+      }
+    },
+    {
+      "type": "way",
+      "id": 945029381,
+      "center": {
+        "lat": 31.0467464,
+        "lon": 31.3614344
+      },
+      "tags": {
+        "access": "yes",
+        "addr:city": "المنصورة",
+        "addr:housenumber": "نادي الحوار",
+        "addr:postcode": "35516",
+        "addr:street": "طريق المشايه السفلى",
+        "building": "yes",
+        "building:levels": "3",
+        "club": "sport",
+        "description": "نادي الحوار للألعاب الرياضية نادي اجتماعي ورياضي",
+        "image": "https://scontent.faly2-1.fna.fbcdn.net/v/t1.6435-9/39249475_1896312120674265_1226233581282525184_n.png?_nc_cat=107&ccb=1-3&_nc_sid=174925&_nc_ohc=nu4R3JtFpgAAX9mSFGz&_nc_ht=scontent.faly2-1.fna&oh=8bbae2f080bad0a0e57823c8ce61b443&oe=60CAF8D5",
+        "internet_access": "wlan",
+        "internet_access:fee": "customers",
+        "layer": "1",
+        "name": "نادي الحوار للألعاب الرياضية",
+        "name:ar": "نادي الحوار للألعاب الرياضية",
+        "name:en": "Hawar Sports Club",
+        "opening_hours": "06:00-24:00",
+        "operator": "board of directors",
+        "phone": "0502351050",
+        "sport": "multi"
+      }
+    },
+    {
+      "type": "way",
+      "id": 1244830060,
+      "center": {
+        "lat": 31.0440381,
+        "lon": 31.3648988
+      },
+      "tags": {
+        "amenity": "hospital",
+        "name": "مستشفى الرمد",
+        "name:ar": "مستشفى الرمد",
+        "name:en": "Hospital of Ophthalmology",
+        "operator": "جامعة المنصورة"
+      }
+    }
+  ],
+  "_acquisition": {
+    "query": "[out:json][timeout:60];\n(\n nwr[amenity=hospital](31.015,31.34,31.07,31.415);\n nwr[name~\"جزيرة الورد|جزيره الورد|الحوار|توريل|توريال|Touril|Toreil|Hewar|Hawar|Gezira\",i](31.015,31.34,31.07,31.415);\n);\nout tags center;",
+    "retrievedAt": "2026-10-18T21:41:10.515514+00:00",
+    "endpoint": "https://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A60%5D%3B%0A%28%0A+nwr%5Bamenity%3Dhospital%5D%2831.015%2C31.34%2C31.07%2C31.415%29%3B%0A+nwr%5Bname~%22%D8%AC%D8%B2%D9%8A%D8%B1%D8%A9+%D8%A7%D9%84%D9%88%D8%B1%D8%AF%7C%D8%AC%D8%B2%D9%8A%D8%B1%D9%87+%D8%A7%D9%84%D9%88%D8%B1%D8%AF%7C%D8%A7%D9%84%D8%AD%D9%88%D8%A7%D8%B1%7C%D8%AA%D9%88%D8%B1%D9%8A%D9%84%7C%D8%AA%D9%88%D8%B1%D9%8A%D8%A7%D9%84%7CTouril%7CToreil%7CHewar%7CHawar%7CGezira%22%2Ci%5D%2831.015%2C31.34%2C31.07%2C31.415%29%3B%0A%29%3B%0Aout+tags+center%3B",
+    "license": "ODbL-1.0"
+  }
+}

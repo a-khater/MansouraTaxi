@@ -1,0 +1,2726 @@
+{
+  "schemaVersion": 1,
+  "generatedAtUTC": "2026-10-19T06:58:44.884Z",
+  "coordinateSystem": {
+    "units": "centimetres",
+    "axes": "Unreal X forward, Y right, Z up",
+    "source": "Three.js metres: x east, y up, z south",
+    "transform": "UE=(-source.z*100,source.x*100,source.y*100)",
+    "winding": "reversed for the axis reflection; mirrored source instances accounted for"
+  },
+  "importer": {
+    "convertScene": false,
+    "convertSceneUnit": false,
+    "uniformScale": 1,
+    "importNormals": true
+  },
+  "sourceFilesPreserved": true,
+  "sourceSha256": {
+    "assets/verna-model.js": "d773270cbea2af0b4288b2c749236feee2c4a9a8f0cf8b12a73dac9d0995c65b",
+    "assets/reference-buildings.js": "02d89da9f4494317ad798e0ef7ea471794bf65d130b9c22d53d7392e18c27680",
+    "assets/metro-frontage.js": "fdbd3ac356cc1f011abf5e4a35fe0009f2e415baa748d19621a7116c9eead032",
+    "assets/law-gate.js": "79ebc25be5cc84d6bcaf1398c5175b5a39debcf12200d40b7b3e9878e9a0ba20",
+    "assets/geometry-batching.js": "89e248dcfa7ded66d9dd0bc983687065a1951669afcbe9e19a6c26899370969a",
+    "world.js": "d96a1f931b6ef601c26dc77bd746a0f7137b6aa9746adb4ba8da8e2fb4df8ad5",
+    "assets/mansoura-map.json": "997bc7396d94d2889c3ecc719125f1b91d6826178eda2bbffbd0208ce502d2bb",
+    "assets/building-references.json": "4130caf58063e2cab9f23e7f2568c66d3f8f08ba13760d6874fe117f4f129ec0"
+  },
+  "entries": [
+    {
+      "id": "SM_Verna",
+      "name": "Original Verna-inspired Mansoura taxi",
+      "model": "verna-lc",
+      "status": "original-model",
+      "source": "original authored geometry and original generated canvas artwork; reference photographs are not bundled",
+      "sourceFiles": [
+        "assets/verna-model.js",
+        "assets/geometry-batching.js"
+      ],
+      "geometryOrigin": "vehicle-ground",
+      "x": 0,
+      "z": 0,
+      "y": 0,
+      "yawDegrees": 0,
+      "sourceOrigin": {
+        "x": 0,
+        "y": 9.05990599209261e-9,
+        "z": 0
+      },
+      "obj": "SourceAssets/SM_Verna.obj",
+      "mtl": "SourceAssets/SM_Verna.mtl",
+      "assetPath": "/Game/Mansoura/Vehicles/SM_Verna",
+      "mesh": "/Game/Mansoura/Vehicles/SM_Verna",
+      "meshPath": "/Game/Mansoura/Vehicles/SM_Verna.SM_Verna",
+      "vertexCount": 87282,
+      "triangleCount": 35515,
+      "meshCount": 62,
+      "instanceCount": 62,
+      "materialCount": 24,
+      "boundsCm": {
+        "min": [
+          -215.00000953674316,
+          -100.51411390304565,
+          0
+        ],
+        "max": [
+          218.1220000045374,
+          100.51411390304565,
+          155.25000004768373
+        ]
+      },
+      "dimensionsCm": {
+        "x": 433.1220095412806,
+        "y": 201.0282278060913,
+        "z": 155.25000004768373
+      },
+      "materials": [
+        {
+          "id": "SM_Verna_material_000",
+          "name": "SM_Verna_material_000",
+          "baseColorLinear": [
+            0.24228112245478564,
+            0.3967552307153359,
+            0.407240211891531
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.1,
+          "metalness": 0.1,
+          "clearcoat": 1,
+          "clearcoatRoughness": 0,
+          "opacity": 0.4,
+          "alphaTest": 0,
+          "transparent": true,
+          "doubleSided": true,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Verna_material_001",
+          "name": "SM_Verna_material_001",
+          "baseColorLinear": [
+            0.6795424696265424,
+            0.7379104087672317,
+            0.7529422167708612
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.19,
+          "metalness": 0.94,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Verna_material_002",
+          "name": "SM_Verna_material_002",
+          "baseColorLinear": [
+            1,
+            1,
+            1
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.5,
+          "metalness": 0.1,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": true,
+          "doubleSided": true,
+          "unlit": false,
+          "baseColorTexture": "SM_Verna_texture_000.png",
+          "emissiveTexture": null,
+          "alphaTexture": "SM_Verna_texture_000.png"
+        },
+        {
+          "id": "SM_Verna_material_003",
+          "name": "SM_Verna_material_003",
+          "baseColorLinear": [
+            1,
+            1,
+            1
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.5,
+          "metalness": 0.1,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": true,
+          "doubleSided": true,
+          "unlit": false,
+          "baseColorTexture": "SM_Verna_texture_001.png",
+          "emissiveTexture": null,
+          "alphaTexture": "SM_Verna_texture_001.png"
+        },
+        {
+          "id": "SM_Verna_material_004",
+          "name": "SM_Verna_material_004",
+          "baseColorLinear": [
+            1,
+            1,
+            1
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.5,
+          "metalness": 0.1,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": true,
+          "unlit": false,
+          "baseColorTexture": "SM_Verna_texture_002.png",
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Verna_material_005",
+          "name": "SM_Verna_material_005",
+          "baseColorLinear": [
+            1,
+            1,
+            1
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.5,
+          "metalness": 0.1,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": true,
+          "unlit": false,
+          "baseColorTexture": "SM_Verna_texture_002.png",
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Verna_material_006",
+          "name": "SM_Verna_material_006",
+          "baseColorLinear": [
+            1,
+            1,
+            1
+          ],
+          "emissiveLinear": [
+            0.45,
+            0.45,
+            0.45
+          ],
+          "roughness": 0.5,
+          "metalness": 0.1,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": true,
+          "unlit": false,
+          "baseColorTexture": "SM_Verna_texture_003.png",
+          "emissiveTexture": "SM_Verna_texture_003.png",
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Verna_material_007",
+          "name": "SM_Verna_material_007",
+          "baseColorLinear": [
+            1,
+            1,
+            1
+          ],
+          "emissiveLinear": [
+            0.45,
+            0.45,
+            0.45
+          ],
+          "roughness": 0.5,
+          "metalness": 0.1,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": true,
+          "unlit": false,
+          "baseColorTexture": "SM_Verna_texture_003.png",
+          "emissiveTexture": "SM_Verna_texture_003.png",
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Verna_material_008",
+          "name": "SM_Verna_material_008",
+          "baseColorLinear": [
+            1,
+            1,
+            1
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.5,
+          "metalness": 0.1,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": true,
+          "doubleSided": true,
+          "unlit": false,
+          "baseColorTexture": "SM_Verna_texture_004.png",
+          "emissiveTexture": null,
+          "alphaTexture": "SM_Verna_texture_004.png"
+        },
+        {
+          "id": "SM_Verna_material_009",
+          "name": "SM_Verna_material_009",
+          "baseColorLinear": [
+            1,
+            1,
+            1
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.5,
+          "metalness": 0.1,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": true,
+          "doubleSided": true,
+          "unlit": false,
+          "baseColorTexture": "SM_Verna_texture_004.png",
+          "emissiveTexture": null,
+          "alphaTexture": "SM_Verna_texture_004.png"
+        },
+        {
+          "id": "SM_Verna_material_010",
+          "name": "SM_Verna_material_010",
+          "baseColorLinear": [
+            0.006512090790025684,
+            0.007499032040460618,
+            0.008023192982520563
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.94,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Verna_material_011",
+          "name": "SM_Verna_material_011",
+          "baseColorLinear": [
+            0.1878207722902346,
+            0.21952619971859377,
+            0.23074004851362043
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.4,
+          "metalness": 0.82,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Verna_material_012",
+          "name": "SM_Verna_material_012",
+          "baseColorLinear": [
+            0.007499032040460618,
+            0.00972121731707524,
+            0.011612245176281512
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.62,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": true,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Verna_material_013",
+          "name": "SM_Verna_material_013",
+          "baseColorLinear": [
+            0.34670405634441115,
+            0.3915724777393922,
+            0.35640014413537763
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.94,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Verna_material_014",
+          "name": "SM_Verna_material_014",
+          "baseColorLinear": [
+            0.407240211891531,
+            0.19461783043107173,
+            0.09084171117479915
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.9,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Verna_material_015",
+          "name": "SM_Verna_material_015",
+          "baseColorLinear": [
+            0.014443843592229466,
+            0.01680737574872402,
+            0.015996293361446288
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.92,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Verna_material_016",
+          "name": "SM_Verna_material_016",
+          "baseColorLinear": [
+            0.23455058215026167,
+            0.04970656597728775,
+            0.054480276435339814
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.27,
+          "metalness": 0.54,
+          "clearcoat": 0.85,
+          "clearcoatRoughness": 0.17,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": true,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Verna_material_017",
+          "name": "SM_Verna_material_017",
+          "baseColorLinear": [
+            0.7835377915215659,
+            0.7230551289161951,
+            0.5840784178830671
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.3,
+          "metalness": 0.32,
+          "clearcoat": 0.8,
+          "clearcoatRoughness": 0.2,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": true,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Verna_material_018",
+          "name": "SM_Verna_material_018",
+          "baseColorLinear": [
+            0.6866853124288864,
+            0.76052450467022,
+            0.6938717612856897
+          ],
+          "emissiveLinear": [
+            0.07,
+            0.056486658036556114,
+            0.034371459488693995
+          ],
+          "roughness": 0.16,
+          "metalness": 0.42,
+          "clearcoat": 1,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Verna_material_019",
+          "name": "SM_Verna_material_019",
+          "baseColorLinear": [
+            0.5457244613615395,
+            0.1912016827303171,
+            0.018500220124016652
+          ],
+          "emissiveLinear": [
+            0.059632336762802274,
+            0.02065462823286339,
+            0.001550588876197846
+          ],
+          "roughness": 0.3,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Verna_material_020",
+          "name": "SM_Verna_material_020",
+          "baseColorLinear": [
+            0.33245153633549385,
+            0.008023192982520563,
+            0.013702083043526807
+          ],
+          "emissiveLinear": [
+            0.19366854183962093,
+            0.004033770179693765,
+            0.0034665224621350716
+          ],
+          "roughness": 0.22,
+          "metalness": 0.15,
+          "clearcoat": 1,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Verna_material_021",
+          "name": "SM_Verna_material_021",
+          "baseColorLinear": [
+            0.5840784178830671,
+            0.6795424696265424,
+            0.623960391667596
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.3,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Verna_material_022",
+          "name": "SM_Verna_material_022",
+          "baseColorLinear": [
+            0.06847816983662762,
+            0.059511238155621766,
+            0.05126945836711539
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.95,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Verna_material_023",
+          "name": "SM_Verna_material_023",
+          "baseColorLinear": [
+            0.19806931954941637,
+            0.17788841597328695,
+            0.14126329113044458
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.98,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        }
+      ],
+      "textures": [
+        {
+          "file": "SourceAssets/SM_Verna_texture_000.png",
+          "width": 512,
+          "height": 96,
+          "origin": "original CanvasTexture"
+        },
+        {
+          "file": "SourceAssets/SM_Verna_texture_001.png",
+          "width": 192,
+          "height": 64,
+          "origin": "original CanvasTexture"
+        },
+        {
+          "file": "SourceAssets/SM_Verna_texture_002.png",
+          "width": 448,
+          "height": 216,
+          "origin": "original CanvasTexture"
+        },
+        {
+          "file": "SourceAssets/SM_Verna_texture_003.png",
+          "width": 384,
+          "height": 96,
+          "origin": "original CanvasTexture"
+        },
+        {
+          "file": "SourceAssets/SM_Verna_texture_004.png",
+          "width": 256,
+          "height": 128,
+          "origin": "original CanvasTexture"
+        }
+      ],
+      "observationDate": null,
+      "heightSource": null,
+      "limitations": [
+        "Original authored interpretation; not a manufacturer model.",
+        "Complete static mesh; wheel/occupant rigging is not retained by OBJ."
+      ]
+    },
+    {
+      "id": "building/1187267273/0",
+      "name": "Mansoura University General Administration",
+      "model": "university-administration",
+      "status": "photo-referenced",
+      "buildingId": "building/1187267273/0",
+      "source": "original authored geometry and original generated canvas artwork; reference photographs are not bundled",
+      "sourceFiles": [
+        "assets/reference-buildings.js"
+      ],
+      "geometryOrigin": "building-local",
+      "x": -2044.1664696969697,
+      "z": -67.9158484848485,
+      "y": 0,
+      "yawDegrees": 0,
+      "sourceOrigin": {
+        "x": -2044.1664696969697,
+        "y": 0,
+        "z": -67.9158484848485
+      },
+      "obj": "SourceAssets/SM_Administration.obj",
+      "mtl": "SourceAssets/SM_Administration.mtl",
+      "assetPath": "/Game/Mansoura/Reference/SM_Administration",
+      "mesh": "/Game/Mansoura/Reference/SM_Administration",
+      "meshPath": "/Game/Mansoura/Reference/SM_Administration.SM_Administration",
+      "vertexCount": 59795,
+      "triangleCount": 30174,
+      "meshCount": 21,
+      "instanceCount": 2475,
+      "materialCount": 15,
+      "boundsCm": {
+        "min": [
+          -3254.9405759786127,
+          -3975.0812750249224,
+          0
+        ],
+        "max": [
+          2804.336313285971,
+          5406.8071838528795,
+          2200
+        ]
+      },
+      "dimensionsCm": {
+        "x": 6059.276889264584,
+        "y": 9381.888458877802,
+        "z": 2200
+      },
+      "materials": [
+        {
+          "id": "SM_Administration_material_000",
+          "name": "SM_Administration_material_000",
+          "baseColorLinear": [
+            1,
+            1,
+            1
+          ],
+          "emissiveLinear": [
+            1,
+            1,
+            1
+          ],
+          "roughness": 0.8,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0.15,
+          "transparent": true,
+          "doubleSided": true,
+          "unlit": true,
+          "baseColorTexture": "SM_Administration_texture_000.png",
+          "emissiveTexture": "SM_Administration_texture_000.png",
+          "alphaTexture": "SM_Administration_texture_000.png"
+        },
+        {
+          "id": "SM_Administration_material_001",
+          "name": "SM_Administration_material_001",
+          "baseColorLinear": [
+            1,
+            1,
+            1
+          ],
+          "emissiveLinear": [
+            1,
+            1,
+            1
+          ],
+          "roughness": 0.8,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0.15,
+          "transparent": true,
+          "doubleSided": true,
+          "unlit": true,
+          "baseColorTexture": "SM_Administration_texture_001.png",
+          "emissiveTexture": "SM_Administration_texture_001.png",
+          "alphaTexture": "SM_Administration_texture_001.png"
+        },
+        {
+          "id": "SM_Administration_material_002",
+          "name": "SM_Administration_material_002",
+          "baseColorLinear": [
+            0.46778379610254284,
+            0.3277780980458375,
+            0.08021982030622662
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.5,
+          "metalness": 0.45,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Administration_material_003",
+          "name": "SM_Administration_material_003",
+          "baseColorLinear": [
+            0.8148465722120952,
+            0.7379104087672317,
+            0.508881320845802
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.9,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Administration_material_004",
+          "name": "SM_Administration_material_004",
+          "baseColorLinear": [
+            0.7681511472425809,
+            0.6866853124288864,
+            0.45641102317066595
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.91,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Administration_material_005",
+          "name": "SM_Administration_material_005",
+          "baseColorLinear": [
+            0.4019777798219466,
+            0.36130677977297226,
+            0.26225065751888765
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.9,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Administration_material_006",
+          "name": "SM_Administration_material_006",
+          "baseColorLinear": [
+            0.06301001764564068,
+            0.20507873637973145,
+            0.19461783043107173
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.25,
+          "metalness": 0.23,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Administration_material_007",
+          "name": "SM_Administration_material_007",
+          "baseColorLinear": [
+            0.1844749944900301,
+            0.174647403645279,
+            0.11443537381770343
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.7,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Administration_material_008",
+          "name": "SM_Administration_material_008",
+          "baseColorLinear": [
+            0.174647403645279,
+            0.11697066774917994,
+            0.06480326668529614
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.72,
+          "metalness": 0.25,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Administration_material_009",
+          "name": "SM_Administration_material_009",
+          "baseColorLinear": [
+            0.48514994004665124,
+            0.3277780980458375,
+            0.24228112245478564
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.55,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Administration_material_010",
+          "name": "SM_Administration_material_010",
+          "baseColorLinear": [
+            0.3967552307153359,
+            0.2663556047920505,
+            0.19806931954941637
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.6,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Administration_material_011",
+          "name": "SM_Administration_material_011",
+          "baseColorLinear": [
+            0.4396571738310091,
+            0.46207699964472876,
+            0.3967552307153359
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.4,
+          "metalness": 0.55,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Administration_material_012",
+          "name": "SM_Administration_material_012",
+          "baseColorLinear": [
+            0.4019777798219466,
+            0.0343398068028541,
+            0.02955683443236377
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.88,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Administration_material_013",
+          "name": "SM_Administration_material_013",
+          "baseColorLinear": [
+            0.85499260812105,
+            0.8148465722120952,
+            0.7156935005005721
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.88,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Administration_material_014",
+          "name": "SM_Administration_material_014",
+          "baseColorLinear": [
+            0.02217388478862708,
+            0.0343398068028541,
+            0.030713443727452196
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.88,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        }
+      ],
+      "textures": [
+        {
+          "file": "SourceAssets/SM_Administration_texture_000.png",
+          "width": 1536,
+          "height": 192,
+          "origin": "original CanvasTexture"
+        },
+        {
+          "file": "SourceAssets/SM_Administration_texture_001.png",
+          "width": 1536,
+          "height": 192,
+          "origin": "original CanvasTexture"
+        }
+      ],
+      "observationDate": null,
+      "heightSource": "Estimated from five observed storeys in the cited official photographs; not surveyed.",
+      "limitations": [
+        "Exact building/column/floor dimensions are not measured.",
+        "Photograph capture dates are unknown; present-day condition has not been checked.",
+        "Fine emblem glyphs, precise ornament, weathering and concealed roof details are not reconstructed.",
+        "Side elevations are incompletely documented and remain plain.",
+        "Materials, window spacing and relief depths are estimated from perspective photographs."
+      ]
+    },
+    {
+      "id": "building/1154800777/0",
+      "name": "Yamama Tower — Metro / Coffee Wizard frontage",
+      "model": "metro-yamama",
+      "status": "photo-referenced",
+      "buildingId": "building/1154800777/0",
+      "source": "original authored geometry and original generated canvas artwork; reference photographs are not bundled",
+      "sourceFiles": [
+        "assets/metro-frontage.js"
+      ],
+      "geometryOrigin": "building-local",
+      "x": -2108.7382000000002,
+      "z": -148.2046,
+      "y": 0,
+      "yawDegrees": 0,
+      "sourceOrigin": {
+        "x": -2108.7382000000002,
+        "y": 0,
+        "z": -148.2046
+      },
+      "obj": "SourceAssets/SM_Metro.obj",
+      "mtl": "SourceAssets/SM_Metro.mtl",
+      "assetPath": "/Game/Mansoura/Reference/SM_Metro",
+      "mesh": "/Game/Mansoura/Reference/SM_Metro",
+      "meshPath": "/Game/Mansoura/Reference/SM_Metro.SM_Metro",
+      "vertexCount": 91509,
+      "triangleCount": 35937,
+      "meshCount": 60,
+      "instanceCount": 1330,
+      "materialCount": 27,
+      "boundsCm": {
+        "min": [
+          -1189.3595361328125,
+          -1672.7620312499766,
+          -0.4999995231628418
+        ],
+        "max": [
+          1734.4853735351562,
+          1183.4147265625234,
+          2640.0000751018524
+        ]
+      },
+      "dimensionsCm": {
+        "x": 2923.8449096679688,
+        "y": 2856.1767578125,
+        "z": 2640.5000746250153
+      },
+      "materials": [
+        {
+          "id": "SM_Metro_material_000",
+          "name": "metro-observed-lettering-COFFEE WIZARD",
+          "baseColorLinear": [
+            1,
+            1,
+            1
+          ],
+          "emissiveLinear": [
+            1,
+            1,
+            1
+          ],
+          "roughness": 0.8,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0.1,
+          "transparent": true,
+          "doubleSided": true,
+          "unlit": true,
+          "baseColorTexture": "SM_Metro_texture_000.png",
+          "emissiveTexture": "SM_Metro_texture_000.png",
+          "alphaTexture": "SM_Metro_texture_000.png"
+        },
+        {
+          "id": "SM_Metro_material_001",
+          "name": "metro-observed-lettering-METRO",
+          "baseColorLinear": [
+            1,
+            1,
+            1
+          ],
+          "emissiveLinear": [
+            1,
+            1,
+            1
+          ],
+          "roughness": 0.8,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0.1,
+          "transparent": true,
+          "doubleSided": true,
+          "unlit": true,
+          "baseColorTexture": "SM_Metro_texture_001.png",
+          "emissiveTexture": "SM_Metro_texture_001.png",
+          "alphaTexture": "SM_Metro_texture_001.png"
+        },
+        {
+          "id": "SM_Metro_material_002",
+          "name": "metro-observed-lettering-COFFEE WIZARD",
+          "baseColorLinear": [
+            1,
+            1,
+            1
+          ],
+          "emissiveLinear": [
+            1,
+            1,
+            1
+          ],
+          "roughness": 0.8,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0.1,
+          "transparent": true,
+          "doubleSided": true,
+          "unlit": true,
+          "baseColorTexture": "SM_Metro_texture_002.png",
+          "emissiveTexture": "SM_Metro_texture_002.png",
+          "alphaTexture": "SM_Metro_texture_002.png"
+        },
+        {
+          "id": "SM_Metro_material_003",
+          "name": "metro-observed-lettering-FARMBOY",
+          "baseColorLinear": [
+            1,
+            1,
+            1
+          ],
+          "emissiveLinear": [
+            1,
+            1,
+            1
+          ],
+          "roughness": 0.8,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0.1,
+          "transparent": true,
+          "doubleSided": true,
+          "unlit": true,
+          "baseColorTexture": "SM_Metro_texture_003.png",
+          "emissiveTexture": "SM_Metro_texture_003.png",
+          "alphaTexture": "SM_Metro_texture_003.png"
+        },
+        {
+          "id": "SM_Metro_material_004",
+          "name": "metro-black-metal-rails",
+          "baseColorLinear": [
+            0.030713443727452196,
+            0.0343398068028541,
+            0.031896033067374104
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.65,
+          "metalness": 0.25,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_005",
+          "name": "metro-cream-plaster",
+          "baseColorLinear": [
+            0.7379104087672317,
+            0.6938717612856897,
+            0.514917665367466
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.92,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_006",
+          "name": "metro-ivory-frames",
+          "baseColorLinear": [
+            0.8387990117372213,
+            0.7991027380100881,
+            0.6653872982754769
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.92,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_007",
+          "name": "metro-ochre-balcony-aprons",
+          "baseColorLinear": [
+            0.5840784178830671,
+            0.33245153633549385,
+            0.158960835050774
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.92,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_008",
+          "name": "metro-rounded-peach-piers",
+          "baseColorLinear": [
+            0.6583748172725346,
+            0.4396571738310091,
+            0.25818285291079235
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.92,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_009",
+          "name": "metro-dark-grey-glazing",
+          "baseColorLinear": [
+            0.09084171117479915,
+            0.10224173307914941,
+            0.09989872823822872
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.4,
+          "metalness": 0.2,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_010",
+          "name": "metro-dark-window-frames",
+          "baseColorLinear": [
+            0.057805430183792694,
+            0.05286064701616471,
+            0.04231141061442144
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.7,
+          "metalness": 0.2,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_011",
+          "name": "metro-blue-grey-glazing",
+          "baseColorLinear": [
+            0.08437621153575764,
+            0.14412847084818123,
+            0.22322795730611386
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.35,
+          "metalness": 0.24,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_012",
+          "name": "metro-brown-enclosed-oriel",
+          "baseColorLinear": [
+            0.12743768042608497,
+            0.08865558627723595,
+            0.06301001764564068
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.92,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_013",
+          "name": "metro-aluminium-frames",
+          "baseColorLinear": [
+            0.5394794890033748,
+            0.5583403896257968,
+            0.4969329950515914
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.55,
+          "metalness": 0.35,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_014",
+          "name": "metro-recessed-balcony-interiors",
+          "baseColorLinear": [
+            0.04373502925049377,
+            0.04231141061442144,
+            0.031896033067374104
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.92,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_015",
+          "name": "metro-faded-green-awnings",
+          "baseColorLinear": [
+            0.08650046202808521,
+            0.13013647668074665,
+            0.08865558627723595
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.92,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_016",
+          "name": "metro-visible-worn-apron-patches",
+          "baseColorLinear": [
+            0.76052450467022,
+            0.6866853124288864,
+            0.4735314961384573
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.92,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_017",
+          "name": "metro-air-conditioner-casings",
+          "baseColorLinear": [
+            0.5394794890033748,
+            0.5457244613615395,
+            0.46778379610254284
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.92,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_018",
+          "name": "metro-arched-mosaic-infill",
+          "baseColorLinear": [
+            0.46778379610254284,
+            0.45641102317066595,
+            0.3712376804636741
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.92,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_019",
+          "name": "metro-entry-brick",
+          "baseColorLinear": [
+            0.26225065751888765,
+            0.17788841597328695,
+            0.13013647668074665
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.92,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_020",
+          "name": "metro-coffee-wizard-charcoal",
+          "baseColorLinear": [
+            0.018500220124016652,
+            0.023153366173251363,
+            0.025186859622305935
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.92,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_021",
+          "name": "metro-cafe-glass-balustrade",
+          "baseColorLinear": [
+            0.3277780980458375,
+            0.4286904966038916,
+            0.48514994004665124
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.31,
+          "metalness": 0.12,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_022",
+          "name": "metro-shop-sign-white",
+          "baseColorLinear": [
+            0.7681511472425809,
+            0.7991027380100881,
+            0.7529422167708612
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.92,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_023",
+          "name": "metro-closed-retail-shutters",
+          "baseColorLinear": [
+            0.10224173307914941,
+            0.10224173307914941,
+            0.08228270712149792
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.83,
+          "metalness": 0.13,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_024",
+          "name": "metro-lime-shop-panel",
+          "baseColorLinear": [
+            0.36625259558833256,
+            0.4452011945063733,
+            0.057805430183792694
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.92,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_025",
+          "name": "metro-metro-sign-blue",
+          "baseColorLinear": [
+            0.02028856305209031,
+            0.04666508633021928,
+            0.1878207722902346
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.92,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_Metro_material_026",
+          "name": "metro-metro-red-stroke",
+          "baseColorLinear": [
+            0.3967552307153359,
+            0.05612849004241121,
+            0.061246054224174035
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.92,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        }
+      ],
+      "textures": [
+        {
+          "file": "SourceAssets/SM_Metro_texture_000.png",
+          "width": 1420,
+          "height": 192,
+          "origin": "original CanvasTexture"
+        },
+        {
+          "file": "SourceAssets/SM_Metro_texture_001.png",
+          "width": 645,
+          "height": 192,
+          "origin": "original CanvasTexture"
+        },
+        {
+          "file": "SourceAssets/SM_Metro_texture_002.png",
+          "width": 1420,
+          "height": 192,
+          "origin": "original CanvasTexture"
+        },
+        {
+          "file": "SourceAssets/SM_Metro_texture_003.png",
+          "width": 786,
+          "height": 192,
+          "origin": "original CanvasTexture"
+        }
+      ],
+      "observationDate": null,
+      "heightSource": "Retained inferred map massing (26.4 m), not a measured height. Six full residential tiers and a cropped upper tier are visible; the photograph does not establish total floor count or roof height.",
+      "limitations": [
+        "The photograph crops the roof and uppermost extent; massing height and upper closeout remain inferred.",
+        "Capture dates and present-day condition are unknown.",
+        "The block and north frontage are strongly supported; exact limits of shared retail fascias across neighboring footprints are not measured.",
+        "Perspective-derived bay widths, balcony depths, floor spacing, materials and weathering are estimates.",
+        "Rear, side elevations, concealed spaces, exact AC and cable positions, and fine signage glyphs lack complete coverage.",
+        "Procedural palms and furniture are omitted from the observed frontage strip; actual street-furniture coverage remains incomplete."
+      ]
+    },
+    {
+      "id": "university-law-gate-3",
+      "name": "Mansoura University Faculty of Law Gate 3",
+      "model": "law-gate",
+      "status": "photo-referenced",
+      "buildingId": "building/1234849113/0",
+      "replacesBuildingIds": [
+        "building/1234849113/0"
+      ],
+      "source": "original authored geometry and original generated canvas artwork; reference photographs are not bundled",
+      "sourceFiles": [
+        "assets/law-gate.js",
+        "assets/geometry-batching.js"
+      ],
+      "geometryOrigin": "building-local",
+      "x": -1790.7490324494527,
+      "z": -156.7826869085657,
+      "y": 0,
+      "yawDegrees": 0,
+      "sourceOrigin": {
+        "x": -1790.7490324494527,
+        "y": 0,
+        "z": -156.7826869085657
+      },
+      "obj": "SourceAssets/SM_LawGate.obj",
+      "mtl": "SourceAssets/SM_LawGate.mtl",
+      "assetPath": "/Game/Mansoura/Reference/SM_LawGate",
+      "mesh": "/Game/Mansoura/Reference/SM_LawGate",
+      "meshPath": "/Game/Mansoura/Reference/SM_LawGate.SM_LawGate",
+      "vertexCount": 175470,
+      "triangleCount": 58490,
+      "meshCount": 15,
+      "instanceCount": 15,
+      "materialCount": 15,
+      "boundsCm": {
+        "min": [
+          -307.5579833002877,
+          -1318.3285807550646,
+          -0.0000023841858265427618
+        ],
+        "max": [
+          307.70315324572834,
+          1318.7520824721332,
+          919.9999809265137
+        ]
+      },
+      "dimensionsCm": {
+        "x": 615.261136546016,
+        "y": 2637.080663227198,
+        "z": 919.9999833106995
+      },
+      "materials": [
+        {
+          "id": "SM_LawGate_material_000",
+          "name": "SM_LawGate_material_000",
+          "baseColorLinear": [
+            0.5647115056965487,
+            0.3277780980458375,
+            0.09989872823822872
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.89,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_LawGate_material_001",
+          "name": "SM_LawGate_material_001",
+          "baseColorLinear": [
+            0.6866853124288864,
+            0.4286904966038916,
+            0.1499597898006365
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.84,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_LawGate_material_002",
+          "name": "SM_LawGate_material_002",
+          "baseColorLinear": [
+            0.3967552307153359,
+            0.22696587349938613,
+            0.08021982030622662
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.95,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_LawGate_material_003",
+          "name": "SM_LawGate_material_003",
+          "baseColorLinear": [
+            0.37626212298046485,
+            0.20863687013464577,
+            0.059511238155621766
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 1,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_LawGate_material_004",
+          "name": "SM_LawGate_material_004",
+          "baseColorLinear": [
+            0.17788841597328695,
+            0.158960835050774,
+            0.10461648408208657
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.96,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_LawGate_material_005",
+          "name": "SM_LawGate_material_005",
+          "baseColorLinear": [
+            0.09989872823822872,
+            0.13013647668074665,
+            0.12213877222015301
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.43,
+          "metalness": 0.24,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_LawGate_material_006",
+          "name": "SM_LawGate_material_006",
+          "baseColorLinear": [
+            0.76052450467022,
+            0.7156935005005721,
+            0.5332764040016892
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.83,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_LawGate_material_007",
+          "name": "SM_LawGate_material_007",
+          "baseColorLinear": [
+            0.007499032040460618,
+            0.010960094003125918,
+            0.00972121731707524
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.51,
+          "metalness": 0.61,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_LawGate_material_008",
+          "name": "SM_LawGate_material_008",
+          "baseColorLinear": [
+            0.5840784178830671,
+            0.4178850708380236,
+            0.13013647668074665
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.4,
+          "metalness": 0.64,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_LawGate_material_009",
+          "name": "SM_LawGate_material_009",
+          "baseColorLinear": [
+            1,
+            1,
+            1
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.83,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": true,
+          "doubleSided": true,
+          "unlit": false,
+          "baseColorTexture": "SM_LawGate_texture_000.png",
+          "emissiveTexture": null,
+          "alphaTexture": "SM_LawGate_texture_000.png"
+        },
+        {
+          "id": "SM_LawGate_material_010",
+          "name": "SM_LawGate_material_010",
+          "baseColorLinear": [
+            1,
+            1,
+            1
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.83,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": true,
+          "doubleSided": true,
+          "unlit": false,
+          "baseColorTexture": "SM_LawGate_texture_001.png",
+          "emissiveTexture": null,
+          "alphaTexture": "SM_LawGate_texture_001.png"
+        },
+        {
+          "id": "SM_LawGate_material_011",
+          "name": "SM_LawGate_material_011",
+          "baseColorLinear": [
+            1,
+            1,
+            1
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.83,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": true,
+          "doubleSided": true,
+          "unlit": false,
+          "baseColorTexture": "SM_LawGate_texture_002.png",
+          "emissiveTexture": null,
+          "alphaTexture": "SM_LawGate_texture_002.png"
+        },
+        {
+          "id": "SM_LawGate_material_012",
+          "name": "SM_LawGate_material_012",
+          "baseColorLinear": [
+            1,
+            1,
+            1
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 0.83,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": true,
+          "doubleSided": true,
+          "unlit": false,
+          "baseColorTexture": "SM_LawGate_texture_003.png",
+          "emissiveTexture": null,
+          "alphaTexture": "SM_LawGate_texture_003.png"
+        },
+        {
+          "id": "SM_LawGate_material_013",
+          "name": "SM_LawGate_material_013",
+          "baseColorLinear": [
+            0.7454042095350284,
+            0.7379104087672317,
+            0.5711248294565854
+          ],
+          "emissiveLinear": [
+            0.09778158866545142,
+            0.07984647579305723,
+            0.04698869732872706
+          ],
+          "roughness": 0.52,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        },
+        {
+          "id": "SM_LawGate_material_014",
+          "name": "SM_LawGate_material_014",
+          "baseColorLinear": [
+            0.06301001764564068,
+            0.13013647668074665,
+            0.06480326668529614
+          ],
+          "emissiveLinear": [
+            0,
+            0,
+            0
+          ],
+          "roughness": 1,
+          "metalness": 0,
+          "clearcoat": 0,
+          "clearcoatRoughness": 0,
+          "opacity": 1,
+          "alphaTest": 0,
+          "transparent": false,
+          "doubleSided": false,
+          "unlit": false,
+          "baseColorTexture": null,
+          "emissiveTexture": null,
+          "alphaTexture": null
+        }
+      ],
+      "textures": [
+        {
+          "file": "SourceAssets/SM_LawGate_texture_000.png",
+          "width": 512,
+          "height": 128,
+          "origin": "original CanvasTexture"
+        },
+        {
+          "file": "SourceAssets/SM_LawGate_texture_001.png",
+          "width": 512,
+          "height": 128,
+          "origin": "original CanvasTexture"
+        },
+        {
+          "file": "SourceAssets/SM_LawGate_texture_002.png",
+          "width": 512,
+          "height": 128,
+          "origin": "original CanvasTexture"
+        },
+        {
+          "file": "SourceAssets/SM_LawGate_texture_003.png",
+          "width": 512,
+          "height": 128,
+          "origin": "original CanvasTexture"
+        }
+      ],
+      "colliderCoordinateSystem": "source-metres-east-x-south-z",
+      "colliders": [
+        {
+          "polygon": [
+            {
+              "x": -1777.8474670158873,
+              "z": -153.97517744937738
+            },
+            {
+              "x": -1778.405251839491,
+              "z": -154.0249377805376
+            },
+            {
+              "x": -1778.1120213165827,
+              "z": -157.3118840624891
+            },
+            {
+              "x": -1777.554236492979,
+              "z": -157.26212373132887
+            }
+          ],
+          "holes": [],
+          "height": 4.7,
+          "sourceId": "university-law-gate-3/pier/0"
+        },
+        {
+          "polygon": [
+            {
+              "x": -1779.7797930119436,
+              "z": -154.1475614537539
+            },
+            {
+              "x": -1784.4711617961834,
+              "z": -154.56608138190512
+            },
+            {
+              "x": -1784.1779312732751,
+              "z": -157.8530276638566
+            },
+            {
+              "x": -1779.4865624890354,
+              "z": -157.43450773570538
+            }
+          ],
+          "holes": [],
+          "height": 9.2,
+          "sourceId": "university-law-gate-3/pier/1"
+        },
+        {
+          "polygon": [
+            {
+              "x": -1789.70039451747,
+              "z": -155.0325844865323
+            },
+            {
+              "x": -1789.999207815829,
+              "z": -155.0592418067967
+            },
+            {
+              "x": -1789.7059772929208,
+              "z": -158.3461880887482
+            },
+            {
+              "x": -1789.4071639945616,
+              "z": -158.3195307684838
+            }
+          ],
+          "holes": [],
+          "height": 8.4,
+          "sourceId": "university-law-gate-3/pier/2"
+        },
+        {
+          "polygon": [
+            {
+              "x": -1791.7920876059845,
+              "z": -155.2191857283832
+            },
+            {
+              "x": -1792.0909009043437,
+              "z": -155.2458430486476
+            },
+            {
+              "x": -1791.7976703814354,
+              "z": -158.5327893305991
+            },
+            {
+              "x": -1791.4988570830762,
+              "z": -158.50613201033468
+            }
+          ],
+          "holes": [],
+          "height": 8.4,
+          "sourceId": "university-law-gate-3/pier/3"
+        },
+        {
+          "polygon": [
+            {
+              "x": -1797.3201336256302,
+              "z": -155.71234615327478
+            },
+            {
+              "x": -1802.01150240987,
+              "z": -156.130866081426
+            },
+            {
+              "x": -1801.7182718869617,
+              "z": -159.4178123633775
+            },
+            {
+              "x": -1797.026903102722,
+              "z": -158.99929243522627
+            }
+          ],
+          "holes": [],
+          "height": 9.2,
+          "sourceId": "university-law-gate-3/pier/4"
+        },
+        {
+          "polygon": [
+            {
+              "x": -1803.3860435823226,
+              "z": -156.2534897546423
+            },
+            {
+              "x": -1803.9438284059263,
+              "z": -156.30325008580252
+            },
+            {
+              "x": -1803.650597883018,
+              "z": -159.590196367754
+            },
+            {
+              "x": -1803.0928130594143,
+              "z": -159.54043603659377
+            }
+          ],
+          "holes": [],
+          "height": 4.7,
+          "sourceId": "university-law-gate-3/pier/5"
+        },
+        {
+          "polygon": [
+            {
+              "x": -1784.1877636698214,
+              "z": -153.74766186724628
+            },
+            {
+              "x": -1784.3471307622797,
+              "z": -153.76187910472063
+            },
+            {
+              "x": -1784.1098806119264,
+              "z": -156.42131746011773
+            },
+            {
+              "x": -1783.9505135194681,
+              "z": -156.40710022264338
+            }
+          ],
+          "holes": [],
+          "height": 4.32,
+          "sourceId": "university-law-gate-3/vehicle-leaf/0"
+        },
+        {
+          "polygon": [
+            {
+              "x": -1789.6162052566806,
+              "z": -154.2319365187164
+            },
+            {
+              "x": -1789.7755723491389,
+              "z": -154.24615375619075
+            },
+            {
+              "x": -1789.5383221987856,
+              "z": -156.90559211158785
+            },
+            {
+              "x": -1789.3789551063273,
+              "z": -156.8913748741135
+            }
+          ],
+          "holes": [],
+          "height": 4.32,
+          "sourceId": "university-law-gate-3/vehicle-leaf/1"
+        },
+        {
+          "polygon": [
+            {
+              "x": -1792.1561182927342,
+              "z": -154.4585237409639
+            },
+            {
+              "x": -1792.3154853851925,
+              "z": -154.47274097843825
+            },
+            {
+              "x": -1792.0782352348392,
+              "z": -157.13217933383535
+            },
+            {
+              "x": -1791.918868142381,
+              "z": -157.117962096361
+            }
+          ],
+          "holes": [],
+          "height": 4.32,
+          "sourceId": "university-law-gate-3/vehicle-leaf/2"
+        },
+        {
+          "polygon": [
+            {
+              "x": -1797.5845598795934,
+              "z": -154.942798392434
+            },
+            {
+              "x": -1797.7439269720517,
+              "z": -154.95701562990837
+            },
+            {
+              "x": -1797.5066768216984,
+              "z": -157.61645398530547
+            },
+            {
+              "x": -1797.3473097292401,
+              "z": -157.6022367478311
+            }
+          ],
+          "holes": [],
+          "height": 4.32,
+          "sourceId": "university-law-gate-3/vehicle-leaf/3"
+        },
+        {
+          "polygon": [
+            {
+              "x": -1789.8374867395585,
+              "z": -156.87204248350935
+            },
+            {
+              "x": -1791.630366529714,
+              "z": -157.03198640509584
+            },
+            {
+              "x": -1791.6152607148974,
+              "z": -157.20131394083273
+            },
+            {
+              "x": -1789.822380924742,
+              "z": -157.04137001924624
+            }
+          ],
+          "holes": [],
+          "height": 4.1,
+          "sourceId": "university-law-gate-3/pedestrian-door"
+        }
+      ],
+      "observationDate": null,
+      "heightSource": "Estimated from the official photographs; the placement is matched to the OSM gate-canopy footprint and named gate nodes.",
+      "limitations": [
+        "Exact height, width, depth and decorative dimensions are estimated.",
+        "Campus gallery capture dates and present-day gate condition are unverified.",
+        "Ironwork scrolls, capitals, hidden roof surfaces and plants are interpreted from photographs."
+      ]
+    }
+  ]
+}

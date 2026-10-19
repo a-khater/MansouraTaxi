@@ -287,7 +287,7 @@ function makeNetworkTraffic(scene, roads) {
   }
   if (!edges.length) return null;
   const cars = [], palette = [0xc7b8a0, 0xe2e4dd, 0x304d62, 0x993f36, 0x426862, 0x6d7779, 0x9a8061, 0x758b95];
-  const count = Math.min(80, Math.max(24, Math.round(edges.reduce((sum, e) => sum + e.length, 0) / 1400)));
+  const count = Math.min(120, Math.max(24, Math.round(edges.reduce((sum, e) => sum + e.length, 0) / 1000)));
   let elapsed = 0;
   function pose(edge, distance) {
     const t = clamp(distance / edge.length, 0, 1);
@@ -328,7 +328,7 @@ function makeNetworkTraffic(scene, roads) {
     return false;
   }
   for (let i = 0; i < count; i++) {
-    const car = makeCityCar(scene, palette[i % palette.length], i % 11 === 0);
+    const car = makeCityCar(scene, palette[i % palette.length], i % 4 === 0);
     Object.assign(car, { index: i, active: true, cruise: 7 + random() * 7, wait: 0 });
     const edge = randomEdge(); place(car, edge, random() * edge.length); cars.push(car);
   }

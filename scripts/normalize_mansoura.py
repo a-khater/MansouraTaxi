@@ -90,7 +90,27 @@ def normalize(data):
         water_geometry.extend([g for g in shapes(geo) if g.geom_type == 'Polygon' and g.area > 5])
     water_union = unary_union(water_geometry)
     water = [{'id': f'water/{i}', 'osmId': 2063788, 'points': points(g.exterior), 'holes': [points(h) for h in g.interiors]} for i, g in enumerate(water_geometry)]
-    bridge_buffers = [LineString(coords(s['points'])).buffer(s['width'] / 2 + 2.5, cap_style=2) for s in segments if s['bridge']]
+    # OSM bridge tags can end slightly inside the mapped riverbank. Clear the
+    # collision mask along the SAME connected approach roads as well; a flat
+    # bridge-only cap strands the vehicle at that boundary. The 35 m approach
+    # limit is an inferred collision allowance, not a change to source geometry.
+    bridge_buffers = []
+    by_node = collections.defaultdict(list)
+    for segment in segments:
+        for point in segment['points']:
+            by_node[str(point['nodeId'])].append(segment)
+    for segment in segments:
+        if not segment['bridge']:
+            continue
+        bridge_buffers.append(LineString(coords(segment['points'])).buffer(segment['width'] / 2 + 2.5))
+        for endpoint in (segment['points'][0], segment['points'][-1]):
+            vicinity = Point(endpoint['x'], endpoint['z']).buffer(35)
+            for approach in by_node[str(endpoint['nodeId'])]:
+                if approach['id'] == segment['id'] or approach['layer'] < 0:
+                    continue
+                line = LineString(coords(approach['points'])).intersection(vicinity)
+                if not line.is_empty:
+                    bridge_buffers.append(line.buffer(approach['width'] / 2 + 2.5))
     collision_water = water_union.difference(unary_union(bridge_buffers)) if bridge_buffers else water_union
     water_collision = [{'id': f'water-collision/{i}', 'points': points(g.exterior), 'holes': [points(h) for h in g.interiors]} for i, g in enumerate(shapes(collision_water)) if g.geom_type == 'Polygon' and g.area > 5]
 

@@ -1,0 +1,231 @@
+# Original generated materials; PBR properties also recorded in reference-assets.json
+newmtl SM_Verna_material_000
+Kd 0.242281 0.396755 0.40724
+Ke 0 0 0
+d 0.4
+Ns 198
+Pr 0.1
+Pm 0.1
+illum 2
+
+newmtl SM_Verna_material_001
+Kd 0.679542 0.73791 0.752942
+Ke 0 0 0
+d 1
+Ns 53.401662
+Pr 0.19
+Pm 0.94
+illum 2
+
+newmtl SM_Verna_material_002
+Kd 1 1 1
+Ke 0 0 0
+d 1
+Ns 6
+Pr 0.5
+Pm 0.1
+illum 2
+map_Kd SM_Verna_texture_000.png
+map_d SM_Verna_texture_000.png
+
+newmtl SM_Verna_material_003
+Kd 1 1 1
+Ke 0 0 0
+d 1
+Ns 6
+Pr 0.5
+Pm 0.1
+illum 2
+map_Kd SM_Verna_texture_001.png
+map_d SM_Verna_texture_001.png
+
+newmtl SM_Verna_material_004
+Kd 1 1 1
+Ke 0 0 0
+d 1
+Ns 6
+Pr 0.5
+Pm 0.1
+illum 2
+map_Kd SM_Verna_texture_002.png
+
+newmtl SM_Verna_material_005
+Kd 1 1 1
+Ke 0 0 0
+d 1
+Ns 6
+Pr 0.5
+Pm 0.1
+illum 2
+map_Kd SM_Verna_texture_002.png
+
+newmtl SM_Verna_material_006
+Kd 1 1 1
+Ke 0.45 0.45 0.45
+d 1
+Ns 6
+Pr 0.5
+Pm 0.1
+illum 2
+map_Kd SM_Verna_texture_003.png
+map_Ke SM_Verna_texture_003.png
+
+newmtl SM_Verna_material_007
+Kd 1 1 1
+Ke 0.45 0.45 0.45
+d 1
+Ns 6
+Pr 0.5
+Pm 0.1
+illum 2
+map_Kd SM_Verna_texture_003.png
+map_Ke SM_Verna_texture_003.png
+
+newmtl SM_Verna_material_008
+Kd 1 1 1
+Ke 0 0 0
+d 1
+Ns 6
+Pr 0.5
+Pm 0.1
+illum 2
+map_Kd SM_Verna_texture_004.png
+map_d SM_Verna_texture_004.png
+
+newmtl SM_Verna_material_009
+Kd 1 1 1
+Ke 0 0 0
+d 1
+Ns 6
+Pr 0.5
+Pm 0.1
+illum 2
+map_Kd SM_Verna_texture_004.png
+map_d SM_Verna_texture_004.png
+
+newmtl SM_Verna_material_010
+Kd 0.006512 0.007499 0.008023
+Ke 0 0 0
+d 1
+Ns 0.263468
+Pr 0.94
+Pm 0
+illum 2
+
+newmtl SM_Verna_material_011
+Kd 0.187821 0.219526 0.23074
+Ke 0 0 0
+d 1
+Ns 10.5
+Pr 0.4
+Pm 0.82
+illum 2
+
+newmtl SM_Verna_material_012
+Kd 0.007499 0.009721 0.011612
+Ke 0 0 0
+d 1
+Ns 3.202914
+Pr 0.62
+Pm 0
+illum 2
+
+newmtl SM_Verna_material_013
+Kd 0.346704 0.391572 0.3564
+Ke 0 0 0
+d 1
+Ns 0.263468
+Pr 0.94
+Pm 0
+illum 2
+
+newmtl SM_Verna_material_014
+Kd 0.40724 0.194618 0.090842
+Ke 0 0 0
+d 1
+Ns 0.469136
+Pr 0.9
+Pm 0
+illum 2
+
+newmtl SM_Verna_material_015
+Kd 0.014444 0.016807 0.015996
+Ke 0 0 0
+d 1
+Ns 0.362949
+Pr 0.92
+Pm 0
+illum 2
+
+newmtl SM_Verna_material_016
+Kd 0.234551 0.049707 0.05448
+Ke 0 0 0
+d 1
+Ns 25.434842
+Pr 0.27
+Pm 0.54
+illum 2
+
+newmtl SM_Verna_material_017
+Kd 0.783538 0.723055 0.584078
+Ke 0 0 0
+d 1
+Ns 20.222222
+Pr 0.3
+Pm 0.32
+illum 2
+
+newmtl SM_Verna_material_018
+Kd 0.686685 0.760525 0.693872
+Ke 0.07 0.056487 0.034371
+d 1
+Ns 76.125
+Pr 0.16
+Pm 0.42
+illum 2
+
+newmtl SM_Verna_material_019
+Kd 0.545724 0.191202 0.0185
+Ke 0.059632 0.020655 0.001551
+d 1
+Ns 20.222222
+Pr 0.3
+Pm 0
+illum 2
+
+newmtl SM_Verna_material_020
+Kd 0.332452 0.008023 0.013702
+Ke 0.193669 0.004034 0.003467
+d 1
+Ns 39.322314
+Pr 0.22
+Pm 0.15
+illum 2
+
+newmtl SM_Verna_material_021
+Kd 0.584078 0.679542 0.62396
+Ke 0 0 0
+d 1
+Ns 20.222222
+Pr 0.3
+Pm 0
+illum 2
+
+newmtl SM_Verna_material_022
+Kd 0.068478 0.059511 0.051269
+Ke 0 0 0
+d 1
+Ns 0.216066
+Pr 0.95
+Pm 0
+illum 2
+
+newmtl SM_Verna_material_023
+Kd 0.198069 0.177888 0.141263
+Ke 0 0 0
+d 1
+Ns 0.082466
+Pr 0.98
+Pm 0
+illum 2
+

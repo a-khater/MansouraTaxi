@@ -1,6 +1,10 @@
-# Mansoura Taxi · 0.2.3
+# Mansoura Taxi ? 0.3.0
 
 A playable 3D browser game set on mapped streets around Al-Mashaya, Al-Gomhouria and Mansoura University. Drive an original burgundy-and-cream Verna LC-inspired taxi, carry up to four unrelated passengers, and negotiate a back seat full of opinions. The Egyptian Arabic black comedy is fictional, informed by documented taxi complaints.
+
+The Windows UE5 source prototype and build/import/streaming instructions are in [native/MansouraTaxi/README.md](native/MansouraTaxi/README.md). It has not been compiled or run: Unreal and a suitable GPU host are unavailable. The browser build remains independently playable.
+
+This sprint expands the map to 4,573 road segments and 2,697 mapped building footprints, adds 19 destinations including the requested hospitals, clubs, Touril, governorate citizen services, El Geish court complex and sporting stadium, plus university crowds, interpreted stalls, more microbuses and compact gameplay UI. Most buildings are still generic and no 99% visual match has been established.
 
 ## Play locally
 
@@ -42,9 +46,10 @@ Open **http://127.0.0.1:8000**. No JavaScript dependency installation is needed.
 | H | Horn, after enabling sound |
 | M | City map / free-roam destination |
 | R | Recover and repair the taxi |
+| Tab | Toggle minimal gameplay HUD |
 | Escape | Pause / resume |
 
-Phones and tablets have steering and pedal buttons, an **E** passenger button and tappable fare choices. Sound starts after the player enables it. There is no recorded radio music or copied game audio.
+Phones and tablets have steering and pedal buttons, an **E** passenger button and tappable fare choices. Sound starts after the player enables it. Original street callouts use an available Arabic system voice and fall back to captions; these are not recorded Egyptian performances. There is no recorded radio music or copied game audio.
 
 ## Geographic accuracy and sources
 
@@ -52,15 +57,16 @@ The street network, mapped building footprints and Nile geometry come from a bou
 
 The visual acceptance target is an individual reconstruction of the actual buildings, including their facade layout, shopfronts, entrances, balconies, rooflines and street furniture. The existing procedural city does **not** satisfy that target. [assets/building-references.json](assets/building-references.json) records location-matched references, observed features and unresolved details for custom reconstructions. `photo-referenced` means the model uses identified photographs; it does not mean measured or identical. `survey-verified` is reserved for complete dated coverage, measured dimensions and an independent comparison. No visual similarity percentage has been established.
 
-Run `npm.cmd run audit:buildings` to produce an inventory in `artifacts/building-coverage.json`. It separates mapped and invented frontage, sourced and inferred heights, individually referenced buildings, and unverified coverage. The first five structures nearest the current start are inferred frontage; public images inspected so far do not supply complete current facade coverage of this stretch. A street-by-street recording with overlapping views, locations and capture dates, plus dimensional checks, is still needed for the requested match.
+Run `npm.cmd run audit:buildings` to produce an inventory in `artifacts/building-coverage.json`. It separates mapped and invented frontage, sourced and inferred heights, individually referenced buildings, and unverified coverage. The current start is on the public road by the photo-referenced Law Gate 3. Complete current facade coverage of the surrounding streets remains unavailable. A street-by-street recording with overlapping views, locations and capture dates, plus dimensional checks, is still needed for the requested match.
 
-[assets/mansoura-map.json](assets/mansoura-map.json) contains the derived database, source query and provenance. It is licensed under ODbL 1.0, with [OpenStreetMap attribution](assets/OSM-ATTRIBUTION.txt) displayed in the game. Original source data is retained in [data/source/mansoura-osm-source.json](data/source/mansoura-osm-source.json). See [RESEARCH.md](RESEARCH.md) for dates, inference limits, photo and footage references, and complaint sources. The linked street videos have not all been frame-analyzed or incorporated as assets.
+[assets/mansoura-map.json](assets/mansoura-map.json) contains the derived database, source query and provenance. It is licensed under ODbL 1.0, with [OpenStreetMap attribution](assets/OSM-ATTRIBUTION.txt) displayed in the game. Current expanded source data is retained in [data/source/mansoura-expanded-osm-source.json](data/source/mansoura-expanded-osm-source.json); the earlier smaller extract is retained for provenance. See [RESEARCH.md](RESEARCH.md) for dates, inference limits, photo and footage references, and complaint sources. The linked street videos have not all been frame-analyzed or incorporated as assets.
 
 To regenerate the normalized map from the retained source:
 
 ```sh
 python -m pip install -r scripts/requirements.txt
-python scripts/acquire_mansoura.py
+python scripts/acquire_mansoura.py --bbox 31.029 31.350 31.061 31.410 --source data/source/mansoura-expanded-osm-source.json --output native/MansouraTaxi/Content/Data/mansoura-map.json
+node scripts/prepare-destinations.mjs
 ```
 
 The acquisition script reuses the retained cache. Its source contains the bounded Overpass query used for acquisition. No Google imagery, third-party game code, meshes, photographs, footage, textures or Rockstar assets are bundled. Three.js is MIT licensed; its license is in `vendor/THREE-LICENSE.txt`. Barlow and Noto Sans Arabic are supplied through Google Fonts under the SIL Open Font License.
@@ -83,6 +89,8 @@ The Node tests cover driving/collision behavior, road routing, geographic constr
 `scripts/qa-building-models.mjs` renders each cataloged custom structure from its recorded review camera. It writes comparison screenshots and a browser report to `artifacts/`. Review those screenshots against the linked reference photographs; passing this rendering check does not certify visual accuracy.
 
 The 0.2.1 audit fixes camera/building clipping, recovery inside conflicting source footprints, abrupt boost release, persistent traffic queues, and passenger stop selection based on straight-line distance. Fare changes also preserve shared quotes when haggling, keep due drop-offs ahead of new pickups, and allow an impatient rider to leave at the next safe stop.
+
+The 0.3 sprint uses the connected Chrome browser for direct visual checks. Historical Playwright scripts and reports describe earlier revisions; they are not evidence of current Unreal runtime validation.
 
 ## Project structure
 

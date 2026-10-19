@@ -44,6 +44,28 @@ test('water collision follows the mapped river and leaves actual bridges open',(
   assert.ok(waterSamples>10&&bridgeSamples>20);
 });
 
+test('a canal bridge remains accessible through its connected shore approaches',()=>{
+  const bridge=data.roads.segments.find(s=>s.osmId===765698815);
+  assert.ok(bridge,'expanded map retains the mapped canal crossing');
+  let samples=0;
+  for(const endpoint of [bridge.points[0],bridge.points.at(-1)]){
+    for(const road of data.roads.segments.filter(s=>!s.bridge)){
+      const index=road.points.findIndex(p=>p.nodeId===endpoint.nodeId);
+      if(index<0)continue;
+      for(const neighbour of [road.points[index-1],road.points[index+1]].filter(Boolean)){
+        const length=Math.hypot(neighbour.x-endpoint.x,neighbour.z-endpoint.z);
+        for(const distance of [1,3,5,8,10]){
+          if(distance>length)continue;
+          const t=distance/length,p={x:endpoint.x+(neighbour.x-endpoint.x)*t,z:endpoint.z+(neighbour.z-endpoint.z)*t};
+          assert.equal(blocked(p,'water'),false,'mapped approach is drivable before and after the bridge tag');
+          if(data.water.some(w=>inside(p,w.points)))samples++;
+        }
+      }
+    }
+  }
+  assert.ok(samples>=4,'the regression covers actual source water/road overlaps, preserving raw bank geometry');
+});
+
 test('land has a geometric river cutout and cannot occlude the lower Nile surface',()=>{
   const terrain=world.root.children.find(o=>o.userData.waterCutouts);assert.ok(terrain);
   scene.updateMatrixWorld(true);let samples=0;

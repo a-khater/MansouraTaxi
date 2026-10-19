@@ -1,0 +1,142 @@
+# Original generated materials; PBR properties also recorded in reference-assets.json
+newmtl SM_Administration_material_000
+Kd 1 1 1
+Ke 1 1 1
+d 1
+Ns 1.125
+Pr 0.8
+Pm 0
+illum 0
+map_Kd SM_Administration_texture_000.png
+map_Ke SM_Administration_texture_000.png
+map_d SM_Administration_texture_000.png
+
+newmtl SM_Administration_material_001
+Kd 1 1 1
+Ke 1 1 1
+d 1
+Ns 1.125
+Pr 0.8
+Pm 0
+illum 0
+map_Kd SM_Administration_texture_001.png
+map_Ke SM_Administration_texture_001.png
+map_d SM_Administration_texture_001.png
+
+newmtl SM_Administration_material_002
+Kd 0.467784 0.327778 0.08022
+Ke 0 0 0
+d 1
+Ns 6
+Pr 0.5
+Pm 0.45
+illum 2
+
+newmtl SM_Administration_material_003
+Kd 0.814847 0.73791 0.508881
+Ke 0 0 0
+d 1
+Ns 0.469136
+Pr 0.9
+Pm 0
+illum 2
+
+newmtl SM_Administration_material_004
+Kd 0.768151 0.686685 0.456411
+Ke 0 0 0
+d 1
+Ns 0.415167
+Pr 0.91
+Pm 0
+illum 2
+
+newmtl SM_Administration_material_005
+Kd 0.401978 0.361307 0.262251
+Ke 0 0 0
+d 1
+Ns 0.469136
+Pr 0.9
+Pm 0
+illum 2
+
+newmtl SM_Administration_material_006
+Kd 0.06301 0.205079 0.194618
+Ke 0 0 0
+d 1
+Ns 30
+Pr 0.25
+Pm 0.23
+illum 2
+
+newmtl SM_Administration_material_007
+Kd 0.184475 0.174647 0.114435
+Ke 0 0 0
+d 1
+Ns 2.081633
+Pr 0.7
+Pm 0
+illum 2
+
+newmtl SM_Administration_material_008
+Kd 0.174647 0.116971 0.064803
+Ke 0 0 0
+d 1
+Ns 1.858025
+Pr 0.72
+Pm 0.25
+illum 2
+
+newmtl SM_Administration_material_009
+Kd 0.48515 0.327778 0.242281
+Ke 0 0 0
+d 1
+Ns 4.61157
+Pr 0.55
+Pm 0
+illum 2
+
+newmtl SM_Administration_material_010
+Kd 0.396755 0.266356 0.198069
+Ke 0 0 0
+d 1
+Ns 3.555556
+Pr 0.6
+Pm 0
+illum 2
+
+newmtl SM_Administration_material_011
+Kd 0.439657 0.462077 0.396755
+Ke 0 0 0
+d 1
+Ns 10.5
+Pr 0.4
+Pm 0.55
+illum 2
+
+newmtl SM_Administration_material_012
+Kd 0.401978 0.03434 0.029557
+Ke 0 0 0
+d 1
+Ns 0.582645
+Pr 0.88
+Pm 0
+illum 2
+
+newmtl SM_Administration_material_013
+Kd 0.854993 0.814847 0.715694
+Ke 0 0 0
+d 1
+Ns 0.582645
+Pr 0.88
+Pm 0
+illum 2
+
+newmtl SM_Administration_material_014
+Kd 0.022174 0.03434 0.030713
+Ke 0 0 0
+d 1
+Ns 0.582645
+Pr 0.88
+Pm 0
+illum 2
+

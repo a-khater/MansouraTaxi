@@ -1,0 +1,256 @@
+# Original generated materials; PBR properties also recorded in reference-assets.json
+newmtl SM_Metro_material_000
+Kd 1 1 1
+Ke 1 1 1
+d 1
+Ns 1.125
+Pr 0.8
+Pm 0
+illum 0
+map_Kd SM_Metro_texture_000.png
+map_Ke SM_Metro_texture_000.png
+map_d SM_Metro_texture_000.png
+
+newmtl SM_Metro_material_001
+Kd 1 1 1
+Ke 1 1 1
+d 1
+Ns 1.125
+Pr 0.8
+Pm 0
+illum 0
+map_Kd SM_Metro_texture_001.png
+map_Ke SM_Metro_texture_001.png
+map_d SM_Metro_texture_001.png
+
+newmtl SM_Metro_material_002
+Kd 1 1 1
+Ke 1 1 1
+d 1
+Ns 1.125
+Pr 0.8
+Pm 0
+illum 0
+map_Kd SM_Metro_texture_002.png
+map_Ke SM_Metro_texture_002.png
+map_d SM_Metro_texture_002.png
+
+newmtl SM_Metro_material_003
+Kd 1 1 1
+Ke 1 1 1
+d 1
+Ns 1.125
+Pr 0.8
+Pm 0
+illum 0
+map_Kd SM_Metro_texture_003.png
+map_Ke SM_Metro_texture_003.png
+map_d SM_Metro_texture_003.png
+
+newmtl SM_Metro_material_004
+Kd 0.030713 0.03434 0.031896
+Ke 0 0 0
+d 1
+Ns 2.733728
+Pr 0.65
+Pm 0.25
+illum 2
+
+newmtl SM_Metro_material_005
+Kd 0.73791 0.693872 0.514918
+Ke 0 0 0
+d 1
+Ns 0.362949
+Pr 0.92
+Pm 0
+illum 2
+
+newmtl SM_Metro_material_006
+Kd 0.838799 0.799103 0.665387
+Ke 0 0 0
+d 1
+Ns 0.362949
+Pr 0.92
+Pm 0
+illum 2
+
+newmtl SM_Metro_material_007
+Kd 0.584078 0.332452 0.158961
+Ke 0 0 0
+d 1
+Ns 0.362949
+Pr 0.92
+Pm 0
+illum 2
+
+newmtl SM_Metro_material_008
+Kd 0.658375 0.439657 0.258183
+Ke 0 0 0
+d 1
+Ns 0.362949
+Pr 0.92
+Pm 0
+illum 2
+
+newmtl SM_Metro_material_009
+Kd 0.090842 0.102242 0.099899
+Ke 0 0 0
+d 1
+Ns 10.5
+Pr 0.4
+Pm 0.2
+illum 2
+
+newmtl SM_Metro_material_010
+Kd 0.057805 0.052861 0.042311
+Ke 0 0 0
+d 1
+Ns 2.081633
+Pr 0.7
+Pm 0.2
+illum 2
+
+newmtl SM_Metro_material_011
+Kd 0.084376 0.144128 0.223228
+Ke 0 0 0
+d 1
+Ns 14.326531
+Pr 0.35
+Pm 0.24
+illum 2
+
+newmtl SM_Metro_material_012
+Kd 0.127438 0.088656 0.06301
+Ke 0 0 0
+d 1
+Ns 0.362949
+Pr 0.92
+Pm 0
+illum 2
+
+newmtl SM_Metro_material_013
+Kd 0.539479 0.55834 0.496933
+Ke 0 0 0
+d 1
+Ns 4.61157
+Pr 0.55
+Pm 0.35
+illum 2
+
+newmtl SM_Metro_material_014
+Kd 0.043735 0.042311 0.031896
+Ke 0 0 0
+d 1
+Ns 0.362949
+Pr 0.92
+Pm 0
+illum 2
+
+newmtl SM_Metro_material_015
+Kd 0.0865 0.130136 0.088656
+Ke 0 0 0
+d 1
+Ns 0.362949
+Pr 0.92
+Pm 0
+illum 2
+
+newmtl SM_Metro_material_016
+Kd 0.760525 0.686685 0.473531
+Ke 0 0 0
+d 1
+Ns 0.362949
+Pr 0.92
+Pm 0
+illum 2
+
+newmtl SM_Metro_material_017
+Kd 0.539479 0.545724 0.467784
+Ke 0 0 0
+d 1
+Ns 0.362949
+Pr 0.92
+Pm 0
+illum 2
+
+newmtl SM_Metro_material_018
+Kd 0.467784 0.456411 0.371238
+Ke 0 0 0
+d 1
+Ns 0.362949
+Pr 0.92
+Pm 0
+illum 2
+
+newmtl SM_Metro_material_019
+Kd 0.262251 0.177888 0.130136
+Ke 0 0 0
+d 1
+Ns 0.362949
+Pr 0.92
+Pm 0
+illum 2
+
+newmtl SM_Metro_material_020
+Kd 0.0185 0.023153 0.025187
+Ke 0 0 0
+d 1
+Ns 0.362949
+Pr 0.92
+Pm 0
+illum 2
+
+newmtl SM_Metro_material_021
+Kd 0.327778 0.42869 0.48515
+Ke 0 0 0
+d 1
+Ns 18.811655
+Pr 0.31
+Pm 0.12
+illum 2
+
+newmtl SM_Metro_material_022
+Kd 0.768151 0.799103 0.752942
+Ke 0 0 0
+d 1
+Ns 0.362949
+Pr 0.92
+Pm 0
+illum 2
+
+newmtl SM_Metro_material_023
+Kd 0.102242 0.102242 0.082283
+Ke 0 0 0
+d 1
+Ns 0.903179
+Pr 0.83
+Pm 0.13
+illum 2
+
+newmtl SM_Metro_material_024
+Kd 0.366253 0.445201 0.057805
+Ke 0 0 0
+d 1
+Ns 0.362949
+Pr 0.92
+Pm 0
+illum 2
+
+newmtl SM_Metro_material_025
+Kd 0.020289 0.046665 0.187821
+Ke 0 0 0
+d 1
+Ns 0.362949
+Pr 0.92
+Pm 0
+illum 2
+
+newmtl SM_Metro_material_026
+Kd 0.396755 0.056128 0.061246
+Ke 0 0 0
+d 1
+Ns 0.362949
+Pr 0.92
+Pm 0
+illum 2
+

@@ -1,5 +1,19 @@
 # Mansoura Taxi: reference notes
 
+## 0.3 sprint update — 19 October 2026
+
+The expanded cached OSM extract covers south 31.029, west 31.350, north 31.061, east 31.410. It contains 4,573 connected road segments, 2,697 mapped footprints, 150 explicitly inferred frontage buildings and four OSM height values. Original source: `data/source/mansoura-expanded-osm-source.json`; browser/native derived maps use the same data. A collision-only allowance follows connected bridge approaches up to 35 m where source road and river polygons overlap; raw street and river geometry is preserved.
+
+`data/destination-sources.json` records ten requested places, their coordinates, evidence and identity caveats. The 19-entry destination catalog includes hospitals, Geziret El Ward, El Hewar, Touril Street, governorate citizen services, El Geish courts and the existing sporting stadium without duplicating it. Public street stops are estimated from the drivable network, not surveyed entrances. The court complex on El Geish must remain distinct from the old El Gomhouria complex and Council of State buildings.
+
+The governorate citizen-service centre pin identifies a service point within the headquarters; the separate business listing on Saber Nakhala conflicts and was rejected. Official address corroboration: [electricity holding company report](https://eehc.gov.eg/CMSEehc/Files/AnnualReport2024.pdf), [chamber directory](https://cairochamber.org.eg/Government.aspx). El Geish courts and the opposing stadium: [official election committee list](https://pres2014.elections.eg/district-committees-list), [Finance Ministry office directory](https://assets.mof.gov.eg/filese1ec3bd0-4b7e-11eb-a290-a134cc8a56b4.pdf). Pins and all other place references are retained in the source catalog.
+
+Moving crowds, rural visitors, shoe/scarf stands, traffic and original street callouts are interpreted atmosphere. Stand locations are not surveyed. Browser speech requires an installed Arabic system voice; no Egyptian actor recordings have been produced. Native audio currently includes a horn and text, with street ambience/voice production still pending.
+
+The UE5 project includes C++ source, shared geographic data, four original OBJ model exports, import/build scripts and a local streaming launch helper. Unreal is absent, and no C++ build, package or streamed runtime has been verified. The Radeon 530/UHD 620 device cannot deliver the requested Lumen target. No GPU cloud host is provisioned. Most buildings remain generic; three photo-referenced structures and zero survey-verified structures do not establish a visual similarity percentage.
+
+The following sections retain earlier research and historical acquisition details.
+
 Research checked on 16 October 2026. The playable Al-Mashaya / Al-Gomhouria / Mansoura University core uses a bounded OpenStreetMap extract, with geographic road alignments, mapped building footprints and Nile geometry retained in a local meter projection. Its facades, missing heights, traffic, taxi model and explicitly separated supplementary frontage buildings are procedural interpretations. This is a mapped street environment, not a surveyed digital twin or a claim of photographic similarity. No third-party game code, textures, recordings or photographs were bundled as game assets.
 
 ## What makes this Mansoura

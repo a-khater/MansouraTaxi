@@ -1,0 +1,144 @@
+# Original generated materials; PBR properties also recorded in reference-assets.json
+newmtl SM_LawGate_material_000
+Kd 0.564712 0.327778 0.099899
+Ke 0 0 0
+d 1
+Ns 0.524934
+Pr 0.89
+Pm 0
+illum 2
+
+newmtl SM_LawGate_material_001
+Kd 0.686685 0.42869 0.14996
+Ke 0 0 0
+d 1
+Ns 0.834467
+Pr 0.84
+Pm 0
+illum 2
+
+newmtl SM_LawGate_material_002
+Kd 0.396755 0.226966 0.08022
+Ke 0 0 0
+d 1
+Ns 0.216066
+Pr 0.95
+Pm 0
+illum 2
+
+newmtl SM_LawGate_material_003
+Kd 0.376262 0.208637 0.059511
+Ke 0 0 0
+d 1
+Ns 0
+Pr 1
+Pm 0
+illum 2
+
+newmtl SM_LawGate_material_004
+Kd 0.177888 0.158961 0.104616
+Ke 0 0 0
+d 1
+Ns 0.170139
+Pr 0.96
+Pm 0
+illum 2
+
+newmtl SM_LawGate_material_005
+Kd 0.099899 0.130136 0.122139
+Ke 0 0 0
+d 1
+Ns 8.816658
+Pr 0.43
+Pm 0.24
+illum 2
+
+newmtl SM_LawGate_material_006
+Kd 0.760525 0.715694 0.533276
+Ke 0 0 0
+d 1
+Ns 0.903179
+Pr 0.83
+Pm 0
+illum 2
+
+newmtl SM_LawGate_material_007
+Kd 0.007499 0.01096 0.009721
+Ke 0 0 0
+d 1
+Ns 5.68935
+Pr 0.51
+Pm 0.61
+illum 2
+
+newmtl SM_LawGate_material_008
+Kd 0.584078 0.417885 0.130136
+Ke 0 0 0
+d 1
+Ns 10.5
+Pr 0.4
+Pm 0.64
+illum 2
+
+newmtl SM_LawGate_material_009
+Kd 1 1 1
+Ke 0 0 0
+d 1
+Ns 0.903179
+Pr 0.83
+Pm 0
+illum 2
+map_Kd SM_LawGate_texture_000.png
+map_d SM_LawGate_texture_000.png
+
+newmtl SM_LawGate_material_010
+Kd 1 1 1
+Ke 0 0 0
+d 1
+Ns 0.903179
+Pr 0.83
+Pm 0
+illum 2
+map_Kd SM_LawGate_texture_001.png
+map_d SM_LawGate_texture_001.png
+
+newmtl SM_LawGate_material_011
+Kd 1 1 1
+Ke 0 0 0
+d 1
+Ns 0.903179
+Pr 0.83
+Pm 0
+illum 2
+map_Kd SM_LawGate_texture_002.png
+map_d SM_LawGate_texture_002.png
+
+newmtl SM_LawGate_material_012
+Kd 1 1 1
+Ke 0 0 0
+d 1
+Ns 0.903179
+Pr 0.83
+Pm 0
+illum 2
+map_Kd SM_LawGate_texture_003.png
+map_d SM_LawGate_texture_003.png
+
+newmtl SM_LawGate_material_013
+Kd 0.745404 0.73791 0.571125
+Ke 0.097782 0.079846 0.046989
+d 1
+Ns 5.39645
+Pr 0.52
+Pm 0
+illum 2
+
+newmtl SM_LawGate_material_014
+Kd 0.06301 0.130136 0.064803
+Ke 0 0 0
+d 1
+Ns 0
+Pr 1
+Pm 0
+illum 2
+

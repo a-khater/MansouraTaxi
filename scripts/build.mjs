@@ -1,7 +1,7 @@
 import { mkdir, copyFile, cp } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
-const files = ['index.html', 'style.css', 'game.js', 'world.js', 'driving.js', 'navigation.js', 'fares.js', 'rendering.js', 'RESEARCH.md'];
+const files = ['index.html', 'style.css', 'play-hud.css', 'game.js', 'world.js', 'driving.js', 'navigation.js', 'fares.js', 'rendering.js', 'street-life.js', 'street-audio.js', 'RESEARCH.md'];
 await mkdir(join(root, 'dist', 'vendor'), { recursive: true });
 for (const file of files) await copyFile(join(root, file), join(root, 'dist', file));
 await cp(join(root, 'vendor'), join(root, 'dist', 'vendor'), { recursive: true });

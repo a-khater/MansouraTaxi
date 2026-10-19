@@ -7,3 +7,13 @@ dist/
 artifacts/
 __pycache__/
 *.pyc
+native/**/Binaries/
+native/**/Intermediate/
+native/**/Saved/
+native/**/DerivedDataCache/
+native/**/.vs/
+native/**/*.sln
+native/**/Content/**/*.uasset
+native/**/Content/**/*.umap
+native/**/Packaged/
+native/**/StreamingInfrastructure/
